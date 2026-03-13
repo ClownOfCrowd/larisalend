@@ -395,18 +395,33 @@
 
   <footer class="site-footer">
     <div class="footer-container">
-      <p class="footer-title">
-        Arquitectura de autor en Riudecanyes · 1976
-      </p>
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <img class="footer-logo" src="media/logo-larisa.png" alt="Inmobiliaria Larisa" loading="lazy" decoding="async">
+          <p class="footer-brand-title">Inmobiliaria Larisa</p>
+          <p>Servicios inmobiliarios en Costa Daurada.</p>
+        </div>
 
-     
+        <div class="footer-col">
+          <h3>Contacto</h3>
+          <p><strong>Telefono:</strong> <a href="tel:+34677743005">+34 677 743 005</a></p>
+          <p><strong>Email:</strong> <a href="mailto:info@inmolarisa.com">info@inmolarisa.com</a></p>
+          <p><strong>Web:</strong> <a href="https://www.inmolarisa.com" target="_blank" rel="noopener noreferrer">www.inmolarisa.com</a></p>
+        </div>
 
-      <p class="footer-contact">
-        Teléfono: +34677743005<br>
-        WhatsApp: +34677743005 <br>
-        Email: info@inmolarisa.com <br>
-        
-      </p>
+        <div class="footer-col">
+          <h3>Datos legales</h3>
+          <p><strong>Titular:</strong> Larisa Lazurenko</p>
+          <p><strong>CIF:</strong> X7253810-R</p>
+          <p><strong>Licencias:</strong> APAI-256 · AICAT-10958</p>
+          <p><strong>Zona:</strong> Cambrils · Tarragona</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Inmobiliaria Larisa · Costa Daurada</p>
+        <p>Todos los derechos reservados</p>
+      </div>
     </div>
   </footer>
 
@@ -754,6 +769,55 @@
       });
 
       blocksToAnimate.forEach((block) => observer.observe(block));
+    });
+  </script>
+
+  <a href="#contacto" class="sticky-cta">Solicitar visita</a>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <span class="lightbox-close" role="button" aria-label="Cerrar vista ampliada">&times;</span>
+    <img class="lightbox-image" src="" alt="">
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const galleryImages = document.querySelectorAll(".gallery-slide img");
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.querySelector(".lightbox-image");
+      const closeBtn = document.querySelector(".lightbox-close");
+
+      if (!galleryImages.length || !lightbox || !lightboxImg || !closeBtn) {
+        return;
+      }
+
+      const closeLightbox = () => {
+        lightbox.style.display = "none";
+        lightbox.setAttribute("aria-hidden", "true");
+        lightboxImg.src = "";
+      };
+
+      galleryImages.forEach((img) => {
+        img.addEventListener("click", () => {
+          lightbox.style.display = "flex";
+          lightbox.setAttribute("aria-hidden", "false");
+          lightboxImg.src = img.src;
+          lightboxImg.alt = img.alt || "Imagen ampliada";
+        });
+      });
+
+      closeBtn.addEventListener("click", closeLightbox);
+
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && lightbox.style.display === "flex") {
+          closeLightbox();
+        }
+      });
     });
   </script>
 
