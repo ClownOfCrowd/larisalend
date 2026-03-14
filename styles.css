@@ -76,10 +76,41 @@ iframe {
 
 .block {
   padding: 56px 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
   position: relative;
   isolation: isolate;
   scroll-margin-top: calc(var(--header-offset) + 14px);
   transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease;
+}
+
+.video-bg,
+.historia-bg video,
+.ubicacion-bg video,
+.footer-video video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.55)
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .block::before,
@@ -111,7 +142,7 @@ iframe {
   );
 }
 
-.block > :not(.historia-bg):not(.arquitectura-bg):not(.ubicacion-bg):not(.potencial-bg):not(.hipoteca-bg-video):not(.contacto-bg-video) {
+.block > :not(.historia-bg):not(.arquitectura-bg):not(.ubicacion-bg):not(.ventajas-ubicacion-bg):not(.potencial-bg):not(.hipoteca-bg-video):not(.contacto-bg-video):not(.video-overlay) {
   position: relative;
   z-index: 2;
 }
@@ -601,6 +632,33 @@ ul {
   gap: 24px;
 }
 
+.ventajas-ubicacion-block {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.ventajas-ubicacion-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.ventajas-ubicacion-block > .white-block-container {
+  position: relative;
+  z-index: 2;
+}
+
+.ventajas-ubicacion-block.white-block h2 {
+  color: #ffffff;
+}
+
+.ventajas-ubicacion-block.white-block h2::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+}
+
 .ventaja-columna {
   background: linear-gradient(145deg, #ffffff, #f7f7f7);
   border-radius: 12px;
@@ -947,12 +1005,37 @@ ul {
 }
 
 .site-footer {
+  position: relative;
+  overflow: hidden;
   padding: 48px 20px 24px;
-  background: linear-gradient(180deg, #1f1f1f, #111);
+  background: #111;
   color: #e8e8e8;
 }
 
+.footer-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.footer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+  pointer-events: none;
+}
+
 .footer-container {
+  position: relative;
+  z-index: 2;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -992,6 +1075,11 @@ ul {
   width: 300px;
   height: auto;
   margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  filter: brightness(1.1) contrast(1.22) saturate(1.08);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42), 0 0 24px rgba(255, 255, 255, 0.22);
 }
 
 .footer-brand-title {
@@ -1165,14 +1253,6 @@ ul {
   z-index: 0;
 }
 
-.ubicacion-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 1;
-}
-
 .ubicacion-bg img {
   width: 100%;
   height: 100%;
@@ -1180,6 +1260,11 @@ ul {
   filter: contrast(1.05) saturate(1.05);
   transform: scale(1.02);
   animation: ubicacionKenBurns 22s ease-in-out infinite;
+}
+
+.ubicacion-bg video {
+  filter: contrast(1.04) saturate(1.04);
+  transform: scale(1.03);
 }
 
 @keyframes ubicacionKenBurns {
@@ -1475,6 +1560,10 @@ ul {
   filter: grayscale(100%) brightness(0.5);
 }
 
+.historia-bg video {
+  filter: grayscale(100%) brightness(0.52);
+}
+
 .historia-content {
   position: relative;
   z-index: 2;
@@ -1650,6 +1739,11 @@ ul {
 }
 
 @media (max-width: 767px) {
+  .block {
+    min-height: auto;
+    padding: 80px 20px;
+  }
+
   :root {
     --header-offset: 56px;
   }
@@ -1944,7 +2038,8 @@ ul {
   }
 
   .block {
-    padding: 56px 14px;
+    min-height: auto;
+    padding: 80px 20px;
   }
 
   .hero-content {
@@ -2058,8 +2153,10 @@ ul {
 }
 
 .block.section-transition-ready .historia-bg img,
+.block.section-transition-ready .historia-bg video,
 .block.section-transition-ready .arquitectura-bg img,
 .block.section-transition-ready .ubicacion-bg img,
+.block.section-transition-ready .ubicacion-bg video,
 .block.section-transition-ready .potencial-bg img,
 .block.section-transition-ready .hipoteca-bg-video,
 .block.section-transition-ready .contacto-bg-video,
@@ -2070,8 +2167,10 @@ ul {
 }
 
 .block.section-transition-visible .historia-bg img,
+.block.section-transition-visible .historia-bg video,
 .block.section-transition-visible .arquitectura-bg img,
 .block.section-transition-visible .ubicacion-bg img,
+.block.section-transition-visible .ubicacion-bg video,
 .block.section-transition-visible .potencial-bg img,
 .block.section-transition-visible .hipoteca-bg-video,
 .block.section-transition-visible .contacto-bg-video,
