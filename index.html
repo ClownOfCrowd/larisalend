@@ -12,7 +12,12 @@
 
   <!-- NAV -->
   <header class="site-header">
-    <nav>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-nav">
       <ul class="nav-list">
         <li><a href="#hero">Inicio</a></li>
         <li><a href="#historia">Historia</a></li>
@@ -344,7 +349,7 @@
         </div>
         <div class="form-group">
           <label for="interes">Tasa de interés (%)</label>
-          <input type="number" id="interes" placeholder="3,5">
+          <input type="text" id="interes" inputmode="decimal" placeholder="3,5" autocomplete="off">
         </div>
 
         <button type="submit">Calcular</button>
@@ -443,6 +448,7 @@
       <div class="footer-bottom">
         <p>© 2026 Inmobiliaria Larisa · Costa Daurada</p>
         <p>Todos los derechos reservados</p>
+        <p><a id="creator-link" class="creator-link" href="https://wa.me/34603592358?text=Hola%2C%20me%20gustaria%20encargar%20trabajo%20de%20sitio%20web%2Fpromocion%2Fservicios%20tecnicos" target="_blank" rel="noopener noreferrer">Sitio web creado por Cyberground</a></p>
       </div>
     </div>
   </footer>
@@ -450,6 +456,80 @@
   <script>
     const siteHeader = document.querySelector('.site-header');
     const heroSection = document.querySelector('#hero');
+    const navToggle = document.querySelector('.nav-toggle');
+    const mainNav = document.getElementById('main-nav');
+
+    const getMenuLabels = () => {
+      const lang = (document.documentElement.lang || 'es').toLowerCase();
+      if (lang.startsWith('ru')) {
+        return { open: 'Открыть меню', close: 'Закрыть меню' };
+      }
+      if (lang.startsWith('en')) {
+        return { open: 'Open menu', close: 'Close menu' };
+      }
+      return { open: 'Abrir menu', close: 'Cerrar menu' };
+    };
+
+    const closeMobileNav = () => {
+      if (!siteHeader || !navToggle) {
+        return;
+      }
+      siteHeader.classList.remove('nav-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', getMenuLabels().open);
+    };
+
+    const syncMobileNavLabel = () => {
+      if (!siteHeader || !navToggle) {
+        return;
+      }
+      const labels = getMenuLabels();
+      const isOpen = siteHeader.classList.contains('nav-open');
+      navToggle.setAttribute('aria-label', isOpen ? labels.close : labels.open);
+    };
+
+    if (navToggle && siteHeader && mainNav) {
+      navToggle.addEventListener('click', () => {
+        const isOpen = siteHeader.classList.toggle('nav-open');
+        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        syncMobileNavLabel();
+      });
+
+      mainNav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 767) {
+            closeMobileNav();
+          }
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if (window.innerWidth > 767 || !siteHeader.classList.contains('nav-open')) {
+          return;
+        }
+        const target = event.target;
+        if (!(target instanceof Node)) {
+          return;
+        }
+        if (!siteHeader.contains(target)) {
+          closeMobileNav();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && siteHeader.classList.contains('nav-open')) {
+          closeMobileNav();
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 767) {
+          closeMobileNav();
+        }
+      });
+
+      syncMobileNavLabel();
+    }
 
     const toggleHeader = () => {
       if (!siteHeader || !heroSection) {
@@ -570,6 +650,95 @@
       });
 
       reveals.forEach(el => observer.observe(el));
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector(".hipoteca-form");
+      const montoInput = document.getElementById("monto");
+      const engancheInput = document.getElementById("enganche");
+      const plazoInput = document.getElementById("plazo");
+      const interesInput = document.getElementById("interes");
+      const resultEl = document.querySelector(".resultado span");
+
+      if (!form || !montoInput || !engancheInput || !plazoInput || !interesInput || !resultEl) {
+        return;
+      }
+
+      const parseNumber = (value) => {
+        if (typeof value !== "string") {
+          return Number.NaN;
+        }
+
+        const cleaned = value.trim().replace(/\s+/g, "");
+        if (!cleaned) {
+          return Number.NaN;
+        }
+
+        if (cleaned.includes(",")) {
+          return Number(cleaned.replace(/\./g, "").replace(",", "."));
+        }
+
+        return Number(cleaned);
+      };
+
+      const getLocale = () => {
+        const lang = (document.documentElement.lang || "es").toLowerCase();
+        if (lang.startsWith("ru")) {
+          return "ru-RU";
+        }
+        if (lang.startsWith("en")) {
+          return "en-US";
+        }
+        return "es-ES";
+      };
+
+      const formatCurrency = (value) => {
+        return value.toLocaleString(getLocale(), {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      };
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const monto = parseNumber(montoInput.value);
+        const enganche = parseNumber(engancheInput.value);
+        const years = parseNumber(plazoInput.value);
+        const annualRate = parseNumber(interesInput.value);
+
+        if (!Number.isFinite(monto) || !Number.isFinite(enganche) || !Number.isFinite(years) || !Number.isFinite(annualRate)) {
+          resultEl.textContent = "---";
+          return;
+        }
+
+        const principal = monto - enganche;
+        const months = Math.round(years * 12);
+
+        if (principal <= 0 || months <= 0 || annualRate < 0) {
+          resultEl.textContent = "---";
+          return;
+        }
+
+        const monthlyRate = annualRate / 100 / 12;
+        let monthlyPayment = 0;
+
+        if (monthlyRate === 0) {
+          monthlyPayment = principal / months;
+        } else {
+          const factor = Math.pow(1 + monthlyRate, months);
+          monthlyPayment = principal * (monthlyRate * factor) / (factor - 1);
+        }
+
+        if (!Number.isFinite(monthlyPayment) || monthlyPayment <= 0) {
+          resultEl.textContent = "---";
+          return;
+        }
+
+        resultEl.textContent = formatCurrency(monthlyPayment);
+      });
     });
   </script>
 
@@ -759,7 +928,12 @@
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isMobile = window.innerWidth < 768;
 
-      const blocksToAnimate = Array.from(allBlocks).filter((block) => !block.querySelector(".reveal"));
+      const blocksToAnimate = Array.from(allBlocks).filter((block) => {
+        if (block.classList.contains("galeria-block")) {
+          return false;
+        }
+        return !block.querySelector(".reveal");
+      });
       if (!blocksToAnimate.length) {
         return;
       }
@@ -793,6 +967,26 @@
       blocksToAnimate.forEach((block) => observer.observe(block));
     });
   </script>
+
+  <div class="chat-ctas" aria-label="Accesos rapidos de chat">
+    <a id="telegram-cta" class="chat-cta chat-cta-telegram" href="https://t.me/+34677743005" target="_blank" rel="noopener noreferrer" aria-label="Telegram chat" title="Telegram">
+      <span class="chat-cta-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M21.9 4.6c-.2-.2-.6-.3-.9-.2L3.7 10.9c-.4.1-.7.5-.7.9 0 .4.3.8.7.9l4.8 1.6 1.8 5.6c.1.4.5.7.9.7h.1c.4 0 .8-.2 1-.6l2.6-3.7 4.5 3.3c.3.2.8.3 1.1.1.3-.2.6-.5.6-.9l1.2-13.8c0-.2-.1-.4-.3-.6Zm-3.1 3.1-7.6 6.7-.6 2.3-1-3.1-3.1-1 12.3-4.9Z"/>
+        </svg>
+      </span>
+      <span class="chat-cta-text">Telegram</span>
+    </a>
+
+    <a id="whatsapp-cta" class="chat-cta chat-cta-whatsapp" href="https://wa.me/34677743005" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp chat" title="WhatsApp">
+      <span class="chat-cta-icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+          <path d="M13.601 2.326A7.854 7.854 0 0 0 8.014 0C3.665 0 .13 3.535.13 7.885c0 1.396.365 2.76 1.057 3.965L0 16l4.272-1.121a7.944 7.944 0 0 0 3.741.95h.004c4.35 0 7.886-3.535 7.886-7.886a7.84 7.84 0 0 0-2.302-5.617Zm-5.586 12.17h-.003a6.61 6.61 0 0 1-3.356-.92l-.24-.142-2.535.665.676-2.472-.156-.254a6.57 6.57 0 0 1-1.01-3.502c0-3.64 2.96-6.6 6.604-6.6a6.57 6.57 0 0 1 4.676 1.93 6.57 6.57 0 0 1 1.927 4.674c-.001 3.641-2.961 6.6-6.583 6.6Zm3.615-4.95c-.198-.099-1.17-.578-1.352-.645-.181-.066-.313-.099-.445.1-.132.198-.512.644-.627.776-.116.132-.231.148-.429.05-.198-.1-.834-.307-1.588-.98-.586-.523-.982-1.168-1.098-1.366-.115-.198-.012-.305.087-.403.089-.088.198-.231.297-.347.1-.115.132-.198.198-.33.066-.132.033-.248-.017-.347-.049-.1-.445-1.074-.61-1.47-.161-.387-.325-.334-.445-.34l-.38-.006a.726.726 0 0 0-.529.248c-.182.198-.694.678-.694 1.653 0 .975.71 1.918.81 2.05.099.132 1.392 2.126 3.372 2.98.471.203.838.324 1.124.415.472.15.901.128 1.24.078.378-.056 1.17-.479 1.336-.942.165-.462.165-.859.116-.942-.05-.082-.182-.132-.38-.231Z"/>
+        </svg>
+      </span>
+      <span class="chat-cta-text">WhatsApp</span>
+    </a>
+  </div>
 
   <a href="#contacto" class="sticky-cta">Solicitar visita</a>
 
@@ -865,6 +1059,8 @@
           navGaleria: "Galería",
           navPotencial: "Potencial",
           navContacto: "Contacto",
+          navToggleOpen: "Abrir menu",
+          navToggleClose: "Cerrar menu",
           heroTitle: "Arquitectura de autor en Riudecanyes · 1976",
           heroSubtitle: "316 m² útiles · 1.138 m² construidos · Parcela 7.057 m² · Licencia turística · A 20 min del mar · A 100 km de Barcelona",
           heroText: "Vivienda independiente situada en la falda de la montaña, con orientación sur y vistas al mar y a la montaña.<br>Proyecto firmado por el arquitecto Miguel María Aragonés.",
@@ -971,6 +1167,9 @@
           contactoMail: "Contacto",
           contactoBtn: "Enviar",
           stickyCta: "Solicitar visita",
+          chatAriaTelegram: "Abrir chat en Telegram",
+          chatAriaWhatsApp: "Abrir chat en WhatsApp",
+          chatMessage: "Hola, vi su pagina de presentacion del inmueble y me gustaria hablar sobre los detalles/coordinar una visita.",
           footerBrand: "Inmobiliaria Larisa",
           footerBrandText: "Servicios inmobiliarios en Costa Daurada.",
           footerContacto: "Contacto",
@@ -983,6 +1182,8 @@
           footerLic: "<strong>Licencias:</strong> APAI-256 · AICAT-10958",
           footerZone: "<strong>Zona:</strong> Cambrils · Tarragona",
           footerBottom2: "Todos los derechos reservados",
+          creatorCredit: "Sitio web creado por Cyberground",
+          creatorWhatsAppMessage: "Hola, me gustaria encargar trabajo de sitio web/promocion/servicios tecnicos",
           lightboxClose: "Cerrar vista ampliada"
         },
         en: {
@@ -995,6 +1196,8 @@
           navGaleria: "Gallery",
           navPotencial: "Potential",
           navContacto: "Contact",
+          navToggleOpen: "Open menu",
+          navToggleClose: "Close menu",
           heroTitle: "Signature architecture in Riudecanyes · 1976",
           heroSubtitle: "316 m² usable area · 1,138 m² built area · 7,057 m² plot · Tourist license · 20 min to the sea · 100 km to Barcelona",
           heroText: "Detached home on the mountain slope, south-facing, with sea and mountain views.<br>Project signed by architect Miguel Maria Aragones.",
@@ -1101,6 +1304,9 @@
           contactoMail: "Contact",
           contactoBtn: "Send",
           stickyCta: "Request visit",
+          chatAriaTelegram: "Open Telegram chat",
+          chatAriaWhatsApp: "Open WhatsApp chat",
+          chatMessage: "Hello, I saw your real estate presentation page and I would like to discuss the details/schedule a viewing.",
           footerBrand: "Inmobiliaria Larisa",
           footerBrandText: "Real estate services in Costa Daurada.",
           footerContacto: "Contact",
@@ -1113,6 +1319,8 @@
           footerLic: "<strong>Licenses:</strong> APAI-256 · AICAT-10958",
           footerZone: "<strong>Area:</strong> Cambrils · Tarragona",
           footerBottom2: "All rights reserved",
+          creatorCredit: "Website by Cyberground",
+          creatorWhatsAppMessage: "Hello, I would like to order your services for website work/marketing/technical services",
           lightboxClose: "Close enlarged image"
         },
         ru: {
@@ -1125,6 +1333,8 @@
           navGaleria: "Галерея",
           navPotencial: "Потенциал",
           navContacto: "Контакты",
+          navToggleOpen: "Открыть меню",
+          navToggleClose: "Закрыть меню",
           heroTitle: "Авторская архитектура в Риудеканьесе · 1976",
           heroSubtitle: "316 м² полезной площади · 1 138 м² застройки · Участок 7 057 м² · Туристическая лицензия · 20 мин до моря · 100 км до Барселоны",
           heroText: "Отдельный дом на склоне горы, южная ориентация, виды на море и горы.<br>Проект архитектора Мигеля Марии Арагонеса.",
@@ -1231,6 +1441,9 @@
           contactoMail: "Контакт",
           contactoBtn: "Отправить",
           stickyCta: "Записаться на просмотр",
+          chatAriaTelegram: "Открыть чат в Telegram",
+          chatAriaWhatsApp: "Открыть чат в WhatsApp",
+          chatMessage: "Здравствуйте, увидел вашу презентационную страницу объекта недвижимости, хотелось бы обсудить детали/назначить встречу для просмотра.",
           footerBrand: "Inmobiliaria Larisa",
           footerBrandText: "Услуги в сфере недвижимости на Коста-Дорада.",
           footerContacto: "Контакты",
@@ -1243,6 +1456,8 @@
           footerLic: "<strong>Лицензии:</strong> APAI-256 · AICAT-10958",
           footerZone: "<strong>Зона:</strong> Cambrils · Tarragona",
           footerBottom2: "Все права защищены",
+          creatorCredit: "Сайт сделан Cyberground",
+          creatorWhatsAppMessage: "Здравствуйте, хотелось бы заказать у вас работу по сайту/продвижению/техническим услугам",
           lightboxClose: "Закрыть увеличенное изображение"
         }
       };
@@ -1273,6 +1488,11 @@
         }
 
         switcher.setAttribute("aria-label", lang === "ru" ? "Выбор языка" : (lang === "en" ? "Language switcher" : "Selector de idioma"));
+
+        if (navToggle) {
+          const navIsOpen = siteHeader && siteHeader.classList.contains('nav-open');
+          navToggle.setAttribute('aria-label', navIsOpen ? dict.navToggleClose : dict.navToggleOpen);
+        }
 
         setText('.nav-list a[href="#hero"]', dict.navHome);
         setText('.nav-list a[href="#historia"]', dict.navHistoria);
@@ -1418,6 +1638,23 @@
         }
 
         setText('.sticky-cta', dict.stickyCta);
+
+        const chatMessage = encodeURIComponent(dict.chatMessage);
+        const telegramCta = document.getElementById('telegram-cta');
+        const whatsappCta = document.getElementById('whatsapp-cta');
+
+        if (telegramCta) {
+          telegramCta.setAttribute('href', `https://t.me/+34677743005?text=${chatMessage}`);
+          telegramCta.setAttribute('aria-label', dict.chatAriaTelegram);
+          telegramCta.setAttribute('title', dict.chatAriaTelegram);
+        }
+
+        if (whatsappCta) {
+          whatsappCta.setAttribute('href', `https://wa.me/34677743005?text=${chatMessage}`);
+          whatsappCta.setAttribute('aria-label', dict.chatAriaWhatsApp);
+          whatsappCta.setAttribute('title', dict.chatAriaWhatsApp);
+        }
+
         setText('.footer-brand-title', dict.footerBrand);
         setText('.footer-brand-title + p', dict.footerBrandText);
         setText('.footer-col:nth-child(2) h3', dict.footerContacto);
@@ -1430,6 +1667,13 @@
         setHtml('.footer-col:nth-child(3) p:nth-child(4)', dict.footerLic);
         setHtml('.footer-col:nth-child(3) p:nth-child(5)', dict.footerZone);
         setText('.footer-bottom p:nth-of-type(2)', dict.footerBottom2);
+
+        const creatorLink = document.getElementById('creator-link');
+        if (creatorLink) {
+          creatorLink.textContent = dict.creatorCredit;
+          const message = encodeURIComponent(dict.creatorWhatsAppMessage);
+          creatorLink.setAttribute('href', `https://wa.me/34603592358?text=${message}`);
+        }
 
         const lightboxClose = document.querySelector('.lightbox-close');
         if (lightboxClose) {
