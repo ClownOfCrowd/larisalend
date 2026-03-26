@@ -406,8 +406,21 @@
     <form class="reveal parallax-content" data-content-speed="0.05">
       <input type="text" name="nombre" placeholder="Nombre">
       <input type="tel" name="telefono" placeholder="Teléfono">
-      <input type="text" name="horario" placeholder="Horario preferido">
-      <input type="email" name="email" placeholder="Contacto">
+      <select name="horario" aria-label="Franja horaria preferida">
+        <option value="" selected disabled>Franja horaria preferida (09:00-20:00)</option>
+        <option value="09:00-10:00">09:00 - 10:00</option>
+        <option value="10:00-11:00">10:00 - 11:00</option>
+        <option value="11:00-12:00">11:00 - 12:00</option>
+        <option value="12:00-13:00">12:00 - 13:00</option>
+        <option value="13:00-14:00">13:00 - 14:00</option>
+        <option value="14:00-15:00">14:00 - 15:00</option>
+        <option value="15:00-16:00">15:00 - 16:00</option>
+        <option value="16:00-17:00">16:00 - 17:00</option>
+        <option value="17:00-18:00">17:00 - 18:00</option>
+        <option value="18:00-19:00">18:00 - 19:00</option>
+        <option value="19:00-20:00">19:00 - 20:00</option>
+      </select>
+      <input type="email" name="email" placeholder="Datos de contacto (correo, mensajero)">
       <button type="submit">Enviar</button>
     </form>
   </section>
@@ -1226,8 +1239,8 @@
           contactoText2: "Atención personalizada y coordinación directa de visita.",
           contactoNombre: "Nombre",
           contactoTelefono: "Teléfono",
-          contactoHorario: "Horario preferido",
-          contactoMail: "Contacto",
+          contactoHorario: "Franja horaria preferida (09:00-20:00)",
+          contactoMail: "Datos de contacto (correo, mensajero)",
           contactoBtn: "Enviar",
           stickyCta: "Solicitar visita",
           chatAriaTelegram: "Abrir chat en Telegram",
@@ -1363,8 +1376,8 @@
           contactoText2: "Personalized support and direct visit coordination.",
           contactoNombre: "Name",
           contactoTelefono: "Phone",
-          contactoHorario: "Preferred time",
-          contactoMail: "Contact",
+          contactoHorario: "Preferred time range (09:00-20:00)",
+          contactoMail: "Contact details (email, messenger)",
           contactoBtn: "Send",
           stickyCta: "Request visit",
           chatAriaTelegram: "Open Telegram chat",
@@ -1500,8 +1513,8 @@
           contactoText2: "Персональное сопровождение и прямая организация просмотра.",
           contactoNombre: "Имя",
           contactoTelefono: "Телефон",
-          contactoHorario: "Удобное время",
-          contactoMail: "Контакт",
+          contactoHorario: "Удобный диапазон времени (09:00-20:00)",
+          contactoMail: "Контактные данные (почта, мессенджер)",
           contactoBtn: "Отправить",
           stickyCta: "Записаться на просмотр",
           chatAriaTelegram: "Открыть чат в Telegram",
@@ -1690,12 +1703,17 @@
         if (contactoForm) {
           const nombre = contactoForm.querySelector('input[name="nombre"]');
           const telefono = contactoForm.querySelector('input[name="telefono"]');
-          const horario = contactoForm.querySelector('input[name="horario"]');
+          const horario = contactoForm.querySelector('select[name="horario"]');
           const email = contactoForm.querySelector('input[name="email"]');
           const btn = contactoForm.querySelector('button[type="submit"]');
           if (nombre) nombre.placeholder = dict.contactoNombre;
           if (telefono) telefono.placeholder = dict.contactoTelefono;
-          if (horario) horario.placeholder = dict.contactoHorario;
+          if (horario) {
+            const promptOption = horario.querySelector('option[value=""]');
+            if (promptOption) {
+              promptOption.textContent = dict.contactoHorario;
+            }
+          }
           if (email) email.placeholder = dict.contactoMail;
           if (btn) btn.textContent = dict.contactoBtn;
         }
