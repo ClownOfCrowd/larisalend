@@ -39,7 +39,7 @@
   <!-- HERO -->
   <section id="hero" class="hero-section">
     <video class="hero-video parallax-bg" data-parallax-speed="0.14" autoplay muted loop playsinline>
-      <source src="media/dronecutbg.mp4" type="video/mp4">
+      <source data-src="media/dronecutbg.mp4" type="video/mp4">
     </video>
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content parallax-content" data-content-speed="0.06">
@@ -63,7 +63,7 @@
   <section id="historia" class="block historia-block">
     <div class="historia-bg parallax-bg" data-parallax-speed="0.18">
       <video class="video-bg" autoplay muted loop playsinline preload="metadata" aria-label="Arquitectura anos 70 en movimiento">
-        <source src="media/historia-bg.mp4" type="video/mp4">
+        <source data-src="media/historia-bg.mp4" type="video/mp4">
       </video>
     </div>
     <div class="video-overlay" aria-hidden="true"></div>
@@ -180,7 +180,7 @@
   <section id="ubicacion" class="block ubicacion-block">
     <div class="ubicacion-bg parallax-bg" data-parallax-speed="0.22">
       <video class="video-bg" autoplay muted loop playsinline preload="metadata" aria-label="Entorno de Riudecanyes">
-        <source src="media/ubicacion-bg.mp4" type="video/mp4">
+        <source data-src="media/ubicacion-bg.mp4" type="video/mp4">
       </video>
     </div>
     <div class="video-overlay" aria-hidden="true"></div>
@@ -214,7 +214,7 @@
   <section class="block ventajas-ubicacion-block white-block">
     <div class="ventajas-ubicacion-bg parallax-bg" data-parallax-speed="0.17">
       <video class="video-bg" autoplay muted loop playsinline preload="metadata" aria-label="Vivir en Riudecanyes">
-        <source src="media/vivir-riudecanyes-bg.mp4" type="video/mp4">
+        <source data-src="media/vivir-riudecanyes-bg.mp4" type="video/mp4">
       </video>
     </div>
     <div class="video-overlay" aria-hidden="true"></div>
@@ -244,8 +244,8 @@
   <!-- Galería -->
   <section id="galeria" class="block galeria-block">
     <div class="galeria-bg parallax-bg" data-parallax-speed="0.16">
-      <video class="video-bg" autoplay muted loop playsinline preload="metadata" poster="media/galeria-bg.jpg" aria-label="Galeria de la propiedad">
-        <source src="media/galeria-bg.mp4" type="video/mp4">
+      <video class="video-bg" autoplay muted loop playsinline preload="metadata" poster="media/exterior-1.jpg" aria-label="Galeria de la propiedad">
+        <source data-src="media/galeria-bg.mp4" type="video/mp4">
       </video>
     </div>
     <div class="video-overlay"></div>
@@ -342,7 +342,7 @@
 
   <section id="hipoteca" class="block hipoteca-block">
     <video class="hipoteca-bg-video parallax-bg" data-parallax-speed="0.16" autoplay muted loop playsinline>
-      <source src="media/moneda-bg.mp4" type="video/mp4">
+      <source data-src="media/moneda-bg.mp4" type="video/mp4">
     </video>
     <div class="hipoteca-container reveal parallax-content" data-content-speed="0.06">
       <h2>Simulación hipotecaria</h2>
@@ -412,7 +412,7 @@
   <!-- CTA final -->
   <section id="contacto" class="block narrow-block accent-block">
     <video class="contacto-bg-video parallax-bg" data-parallax-speed="0.15" autoplay muted loop playsinline>
-      <source src="media/fondofooter.mp4" type="video/mp4">
+      <source data-src="media/fondofooter.mp4" type="video/mp4">
     </video>
     <h2>Solicitar información o concertar visita</h2>
     <p>Si desea más detalles o coordinar una visita, deje sus datos de contacto.</p>
@@ -444,7 +444,7 @@
   <footer class="site-footer">
     <div class="footer-video" aria-hidden="true">
       <video class="video-bg" autoplay muted loop playsinline preload="metadata">
-        <source src="media/footer-bg.mp4" type="video/mp4">
+        <source data-src="media/footer-bg.mp4" type="video/mp4">
       </video>
     </div>
     <div class="footer-overlay" aria-hidden="true"></div>
@@ -1027,6 +1027,83 @@
     </button>
     <button class="lightbox-close" type="button" aria-label="Cerrar vista ampliada">&times;</button>
   </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const backgroundVideos = Array.from(document.querySelectorAll(
+        ".hero-video, .video-bg, .hipoteca-bg-video, .contacto-bg-video"
+      ));
+
+      if (!backgroundVideos.length) {
+        return;
+      }
+
+      const isMobileLike =
+        window.matchMedia("(max-width: 1024px)").matches ||
+        window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
+      const loadAndPlay = (video) => {
+        if (!video || video.dataset.videoReady === "1") {
+          return;
+        }
+
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.setAttribute("muted", "");
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        video.setAttribute("disablepictureinpicture", "");
+        video.setAttribute("controlsList", "nodownload noplaybackrate noremoteplayback nofullscreen");
+        video.removeAttribute("controls");
+
+        const pendingSources = video.querySelectorAll("source[data-src]");
+        pendingSources.forEach((source) => {
+          if (!source.getAttribute("src")) {
+            source.setAttribute("src", source.dataset.src || "");
+          }
+        });
+
+        if (pendingSources.length) {
+          video.load();
+        }
+
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(() => {
+            // Some mobile browser modes can block autoplay; keep video configured without controls.
+          });
+        }
+
+        video.dataset.videoReady = "1";
+      };
+
+      if (isMobileLike && "IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              loadAndPlay(entry.target);
+              obs.unobserve(entry.target);
+            }
+          });
+        }, {
+          root: null,
+          rootMargin: "260px 0px",
+          threshold: 0.01
+        });
+
+        backgroundVideos.forEach((video) => {
+          video.preload = "none";
+          observer.observe(video);
+        });
+      } else {
+        backgroundVideos.forEach((video) => {
+          video.preload = "metadata";
+          loadAndPlay(video);
+        });
+      }
+    });
+  </script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {

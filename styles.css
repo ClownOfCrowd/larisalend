@@ -170,6 +170,24 @@ iframe {
   height: 100%;
   object-fit: cover;
   z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-video,
+.video-bg,
+.hipoteca-bg-video,
+.contacto-bg-video {
+  pointer-events: none;
+  -webkit-touch-callout: none;
+}
+
+video::-webkit-media-controls,
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-panel,
+video::-webkit-media-controls-play-button {
+  display: none !important;
+  -webkit-appearance: none;
 }
 
 .video-overlay {
