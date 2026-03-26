@@ -1220,6 +1220,12 @@ ul {
   z-index: 2000;
 }
 
+.sticky-cta.is-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
 .chat-ctas {
   position: fixed;
   left: 30px;

@@ -1039,6 +1039,44 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const stickyCta = document.querySelector(".sticky-cta");
+      const footer = document.querySelector(".site-footer");
+
+      if (!stickyCta || !footer) {
+        return;
+      }
+
+      const toggleByFooter = (isFooterVisible) => {
+        stickyCta.classList.toggle("is-hidden", isFooterVisible);
+      };
+
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            toggleByFooter(entry.isIntersecting);
+          });
+        }, {
+          root: null,
+          threshold: 0.05
+        });
+
+        observer.observe(footer);
+      } else {
+        const onScroll = () => {
+          const rect = footer.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+          toggleByFooter(isVisible);
+        };
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll, { passive: true });
+        onScroll();
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
       const storageKey = "siteLang";
       const fallbackLang = "es";
       const switcher = document.querySelector(".language-switcher");
