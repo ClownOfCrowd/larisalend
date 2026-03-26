@@ -340,6 +340,69 @@
     </div>
   </section>
 
+  <section id="inversion" class="block investment-opportunity-block">
+    <div class="investment-container">
+      <div class="investment-top">
+        <div class="investment-content">
+          <h2 class="investment-title reveal">Oportunidad de inversión estructurada en Reus</h2>
+          <p class="investment-subtitle reveal reveal-delay-1">Inversión combinada · Activo residencial + edificio multifamiliar</p>
+
+          <p class="investment-text-1 reveal reveal-delay-1">
+            Se presenta una oportunidad de inversión basada en la adquisición conjunta de dos activos inmobiliarios: una propiedad residencial tipo villa y un edificio multifamiliar ubicado en el centro de Reus.
+          </p>
+
+          <p class="investment-intro reveal reveal-delay-2">El edificio en Reus está compuesto por:</p>
+
+          <div class="investment-facts reveal reveal-delay-2" aria-label="Resumen del edificio en Reus">
+            <article class="investment-fact">
+              <p class="investment-fact-value">8</p>
+              <p class="investment-fact-label investment-fact-label-1">unidades residenciales</p>
+            </article>
+            <article class="investment-fact">
+              <p class="investment-fact-value">6</p>
+              <p class="investment-fact-label investment-fact-label-2">plazas de aparcamiento</p>
+            </article>
+          </div>
+
+          <p class="investment-text-2 reveal reveal-delay-2">
+            Su ubicación en una zona urbana consolidada garantiza una demanda estable y posiciona el activo como una base sólida dentro de una estrategia de inversión inmobiliaria.
+          </p>
+
+          <p class="investment-text-3 reveal reveal-delay-3">La operación se plantea como una compra conjunta de ambos activos, con una inversión total de:</p>
+
+          <div class="investment-price reveal reveal-delay-3" aria-label="Inversión total">
+            <span>2.000.000 €</span>
+          </div>
+
+          <p class="investment-text-4 reveal reveal-delay-3">
+            El conjunto de la operación permite combinar uso residencial y enfoque inversor, estructurando una entrada eficiente en el mercado local con potencial de optimización a medio y largo plazo.
+          </p>
+
+          <p class="investment-text-5 reveal reveal-delay-3">
+            Se dispone de plano del edificio.
+            La información detallada, así como la documentación completa del activo, se facilita a través del agente inmobiliario.
+            Posibilidad de organizar visita y revisión completa de la propiedad.
+          </p>
+
+          <p class="investment-signature reveal reveal-delay-3">Oferta directa del propietario del activo principal</p>
+        </div>
+
+        <figure class="investment-photo reveal reveal-delay-2">
+          <img class="investment-lightbox-target" data-lightbox-group="investment" src="media/oferta-reus-edificio.jpg" alt="Edificio multifamiliar en zona urbana de Reus" loading="lazy" decoding="async">
+        </figure>
+      </div>
+
+      <figure class="investment-plan reveal reveal-delay-3">
+        <figcaption class="investment-plan-caption">Plano del edificio</figcaption>
+        <img class="investment-lightbox-target" data-lightbox-group="investment" src="media/oferta-reus-plano.jpg" alt="Plano del edificio" loading="lazy" decoding="async">
+      </figure>
+
+      <div class="investment-footer reveal reveal-delay-3">
+        <a href="#contacto" class="btn primary investment-cta">Solicitar información de la inversión</a>
+      </div>
+    </div>
+  </section>
+
   <section id="hipoteca" class="block hipoteca-block">
     <video class="hipoteca-bg-video parallax-bg" data-parallax-speed="0.16" autoplay muted loop playsinline>
       <source data-src="media/moneda-bg.mp4" type="video/mp4">
@@ -1108,6 +1171,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const galleryImages = document.querySelectorAll(".gallery-slide img");
+      const investmentImages = Array.from(document.querySelectorAll(".investment-lightbox-target"));
       const gallerySlider = document.querySelector("#galeria .gallery-slider");
       const galleryPrev = document.querySelector("#galeria .gallery-nav-prev");
       const galleryNext = document.querySelector("#galeria .gallery-nav-next");
@@ -1123,7 +1187,9 @@
       }
 
       const galleryList = Array.from(galleryImages);
+      const investmentList = Array.from(investmentImages);
       let currentIndex = 0;
+      let activeLightboxList = galleryList;
       let isLightboxOpen = false;
       let lockedScrollY = 0;
       let swipeStartX = null;
@@ -1233,7 +1299,7 @@
       syncGalleryIndexFromScroll();
 
       const updateLightboxImage = () => {
-        const image = galleryList[currentIndex];
+        const image = activeLightboxList[currentIndex];
         if (!image) {
           return;
         }
@@ -1241,7 +1307,11 @@
         lightboxImg.alt = image.alt || "Imagen ampliada";
       };
 
-      const openLightbox = (index) => {
+      const openLightbox = (index, list = galleryList) => {
+        if (!list.length) {
+          return;
+        }
+        activeLightboxList = list;
         currentIndex = index;
         updateLightboxImage();
         lockPageScroll();
@@ -1254,7 +1324,7 @@
         if (!isLightboxOpen) {
           return;
         }
-        const total = galleryList.length;
+        const total = activeLightboxList.length;
         currentIndex = (currentIndex + direction + total) % total;
         updateLightboxImage();
       };
@@ -1272,7 +1342,13 @@
 
       galleryImages.forEach((img, index) => {
         img.addEventListener("click", () => {
-          openLightbox(index);
+          openLightbox(index, galleryList);
+        });
+      });
+
+      investmentImages.forEach((img, index) => {
+        img.addEventListener("click", () => {
+          openLightbox(index, investmentList);
         });
       });
 
@@ -1491,6 +1567,19 @@
           escenario2Text: "Un refugio mediterraneo ideal para escapadas de fin de semana o largas temporadas.",
           escenario3Title: "Inversion",
           escenario3Text: "La licencia turistica existente permite contemplar el uso de la propiedad para alquiler vacacional.",
+          investmentTitle: "Oportunidad de inversión estructurada en Reus",
+          investmentSubtitle: "Inversión combinada · Activo residencial + edificio multifamiliar",
+          investmentText1: "Se presenta una oportunidad de inversión basada en la adquisición conjunta de dos activos inmobiliarios: una propiedad residencial tipo villa y un edificio multifamiliar ubicado en el centro de Reus.",
+          investmentIntro: "El edificio en Reus está compuesto por:",
+          investmentFact1: "unidades residenciales",
+          investmentFact2: "plazas de aparcamiento",
+          investmentText2: "Su ubicación en una zona urbana consolidada garantiza una demanda estable y posiciona el activo como una base sólida dentro de una estrategia de inversión inmobiliaria.",
+          investmentText3: "La operación se plantea como una compra conjunta de ambos activos, con una inversión total de:",
+          investmentText4: "El conjunto de la operación permite combinar uso residencial y enfoque inversor, estructurando una entrada eficiente en el mercado local con potencial de optimización a medio y largo plazo.",
+          investmentText5: "Se dispone de plano del edificio. La información detallada, así como la documentación completa del activo, se facilita a través del agente inmobiliario. Posibilidad de organizar visita y revisión completa de la propiedad.",
+          investmentSignature: "Oferta directa del propietario del activo principal",
+          investmentPlanCaption: "Plano del edificio",
+          investmentCta: "Solicitar información de la inversión",
           hipotecaTitle: "Simulación hipotecaria",
           hipotecaText: "Calcula rápidamente un estimado mensual de la hipoteca para esta propiedad.",
           labelMonto: "Monto de la propiedad (€)",
@@ -1630,6 +1719,19 @@
           escenario2Text: "An ideal Mediterranean retreat for weekend escapes or longer stays.",
           escenario3Title: "Investment",
           escenario3Text: "The existing tourist license allows using the property for holiday rentals.",
+          investmentTitle: "Structured investment opportunity in Reus",
+          investmentSubtitle: "Combined investment · Residential asset + multifamily building",
+          investmentText1: "This investment opportunity is based on the joint acquisition of two real estate assets: a villa-type residential property and a multifamily building located in central Reus.",
+          investmentIntro: "The building in Reus consists of:",
+          investmentFact1: "residential units",
+          investmentFact2: "parking spaces",
+          investmentText2: "Its location in a consolidated urban area ensures stable demand and positions the asset as a solid base within a real estate investment strategy.",
+          investmentText3: "The operation is structured as a joint purchase of both assets, with a total investment of:",
+          investmentText4: "The combined transaction allows residential use and an investment-focused approach, structuring an efficient entry into the local market with medium- and long-term optimization potential.",
+          investmentText5: "A building plan is available. Detailed information, as well as complete asset documentation, is provided through the real estate agent. It is possible to arrange a visit and a full property review.",
+          investmentSignature: "Direct offer from the owner of the main asset",
+          investmentPlanCaption: "Building plan",
+          investmentCta: "Request investment information",
           hipotecaTitle: "Mortgage simulation",
           hipotecaText: "Quickly calculate an estimated monthly mortgage payment for this property.",
           labelMonto: "Property price (€)",
@@ -1769,6 +1871,19 @@
           escenario2Text: "Средиземноморское убежище для уикендов и длительных сезонов.",
           escenario3Title: "Инвестиция",
           escenario3Text: "Действующая туристическая лицензия позволяет рассматривать объект для краткосрочной аренды.",
+          investmentTitle: "Структурированная инвестиционная возможность в Реусе",
+          investmentSubtitle: "Комбинированная инвестиция · Жилой актив + многоквартирное здание",
+          investmentText1: "Предлагается инвестиционная возможность, основанная на совместном приобретении двух объектов недвижимости: жилой виллы и многоквартирного здания в центре Реуса.",
+          investmentIntro: "Здание в Реусе включает:",
+          investmentFact1: "жилых единиц",
+          investmentFact2: "парковочных мест",
+          investmentText2: "Расположение в сформированном городском районе обеспечивает стабильный спрос и делает актив надежной основой инвестиционной стратегии в недвижимости.",
+          investmentText3: "Сделка рассматривается как совместная покупка обоих активов с общим объемом инвестиций:",
+          investmentText4: "Комплексный формат сделки позволяет сочетать жилое использование и инвестиционный подход, формируя эффективный вход на локальный рынок с потенциалом оптимизации в средне- и долгосрочной перспективе.",
+          investmentText5: "План здания доступен. Подробная информация, а также полный пакет документации по активу предоставляются через агента по недвижимости. Возможна организация визита и полного осмотра объекта.",
+          investmentSignature: "Прямое предложение от собственника основного актива",
+          investmentPlanCaption: "План здания",
+          investmentCta: "Запросить информацию по инвестиции",
           hipotecaTitle: "Ипотечный расчет",
           hipotecaText: "Быстро рассчитайте примерный ежемесячный платеж по ипотеке для этого объекта.",
           labelMonto: "Стоимость объекта (€)",
@@ -1942,6 +2057,19 @@
         setText('.escenarios-vida-grid .escenario-card:nth-child(2) p', dict.escenario2Text);
         setText('.escenarios-vida-grid .escenario-card:nth-child(3) h3', dict.escenario3Title);
         setText('.escenarios-vida-grid .escenario-card:nth-child(3) p', dict.escenario3Text);
+        setText('#inversion .investment-title', dict.investmentTitle);
+        setText('#inversion .investment-subtitle', dict.investmentSubtitle);
+        setText('#inversion .investment-text-1', dict.investmentText1);
+        setText('#inversion .investment-intro', dict.investmentIntro);
+        setText('#inversion .investment-fact-label-1', dict.investmentFact1);
+        setText('#inversion .investment-fact-label-2', dict.investmentFact2);
+        setText('#inversion .investment-text-2', dict.investmentText2);
+        setText('#inversion .investment-text-3', dict.investmentText3);
+        setText('#inversion .investment-text-4', dict.investmentText4);
+        setText('#inversion .investment-text-5', dict.investmentText5);
+        setText('#inversion .investment-signature', dict.investmentSignature);
+        setText('#inversion .investment-plan-caption', dict.investmentPlanCaption);
+        setText('#inversion .investment-cta', dict.investmentCta);
 
         setText('#hipoteca .hipoteca-container > h2', dict.hipotecaTitle);
         setText('#hipoteca .hipoteca-container > p', dict.hipotecaText);
