@@ -1040,32 +1040,57 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const stickyCta = document.querySelector(".sticky-cta");
+      const chatCtas = document.querySelector(".chat-ctas");
+      const hero = document.getElementById("hero");
       const footer = document.querySelector(".site-footer");
 
-      if (!stickyCta || !footer) {
+      if (!stickyCta || !chatCtas || !hero || !footer) {
         return;
       }
 
-      const toggleByFooter = (isFooterVisible) => {
-        stickyCta.classList.toggle("is-hidden", isFooterVisible);
+      let isHeroVisible = false;
+      let isFooterVisible = false;
+
+      const applyVisibility = () => {
+        const hideSticky = isHeroVisible || isFooterVisible;
+        const hideChat = isHeroVisible;
+
+        stickyCta.classList.toggle("is-hidden", hideSticky);
+        chatCtas.classList.toggle("is-hidden", hideChat);
       };
 
       if ("IntersectionObserver" in window) {
-        const observer = new IntersectionObserver((entries) => {
+        const heroObserver = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
-            toggleByFooter(entry.isIntersecting);
+            isHeroVisible = entry.isIntersecting;
+            applyVisibility();
+          });
+        }, {
+          root: null,
+          threshold: 0.2
+        });
+
+        const footerObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            isFooterVisible = entry.isIntersecting;
+            applyVisibility();
           });
         }, {
           root: null,
           threshold: 0.05
         });
 
-        observer.observe(footer);
+        heroObserver.observe(hero);
+        footerObserver.observe(footer);
       } else {
         const onScroll = () => {
-          const rect = footer.getBoundingClientRect();
-          const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-          toggleByFooter(isVisible);
+          const heroRect = hero.getBoundingClientRect();
+          const footerRect = footer.getBoundingClientRect();
+
+          isHeroVisible = heroRect.top < window.innerHeight * 0.85 && heroRect.bottom > window.innerHeight * 0.2;
+          isFooterVisible = footerRect.top < window.innerHeight && footerRect.bottom > 0;
+
+          applyVisibility();
         };
 
         window.addEventListener("scroll", onScroll, { passive: true });
