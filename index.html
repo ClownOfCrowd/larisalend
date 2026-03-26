@@ -243,41 +243,55 @@
 
   <!-- Galería -->
   <section id="galeria" class="block galeria-block">
+    <div class="galeria-bg parallax-bg" data-parallax-speed="0.16">
+      <video class="video-bg" autoplay muted loop playsinline preload="metadata" poster="media/galeria-bg.jpg" aria-label="Galeria de la propiedad">
+        <source src="media/galeria-bg.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="video-overlay"></div>
     <div class="galeria-container">
       <h2>Galería</h2>
-      <div class="gallery-slider" aria-label="Galería de la propiedad">
-        <div class="gallery-track">
-          <div class="gallery-slide">
-            <img src="media/aerea-1.jpg" alt="Vista general de la finca" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/exterior-1.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/exterior-2.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/piscina-1.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/piscina-2.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/piscina-3.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/interior-1.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/interior-2.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/interior-3.jpg" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="gallery-slide">
-            <img src="media/interior-4.jpg" alt="" loading="lazy" decoding="async">
+      <div class="gallery-slider-wrap">
+        <button class="gallery-nav gallery-nav-prev" type="button" aria-label="Foto anterior">
+          <span aria-hidden="true">&#8592;</span>
+        </button>
+        <div class="gallery-slider" aria-label="Galería de la propiedad">
+          <div class="gallery-track">
+            <div class="gallery-slide">
+              <img src="media/aerea-1.jpg" alt="Vista general de la finca" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/exterior-1.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/exterior-2.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/piscina-1.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/piscina-2.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/piscina-3.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/interior-1.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/interior-2.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/interior-3.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="gallery-slide">
+              <img src="media/interior-4.jpg" alt="" loading="lazy" decoding="async">
+            </div>
           </div>
         </div>
+        <button class="gallery-nav gallery-nav-next" type="button" aria-label="Foto siguiente">
+          <span aria-hidden="true">&#8594;</span>
+        </button>
       </div>
 
       <div class="galeria-links">
@@ -1004,37 +1018,217 @@
   <a href="#contacto" class="sticky-cta">Solicitar visita</a>
 
   <div class="lightbox" id="lightbox" aria-hidden="true">
-    <span class="lightbox-close" role="button" aria-label="Cerrar vista ampliada">&times;</span>
+    <button class="lightbox-nav lightbox-nav-prev" type="button" aria-label="Imagen anterior">
+      <span aria-hidden="true">&#8592;</span>
+    </button>
     <img class="lightbox-image" src="" alt="">
+    <button class="lightbox-nav lightbox-nav-next" type="button" aria-label="Imagen siguiente">
+      <span aria-hidden="true">&#8594;</span>
+    </button>
+    <button class="lightbox-close" type="button" aria-label="Cerrar vista ampliada">&times;</button>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const galleryImages = document.querySelectorAll(".gallery-slide img");
+      const gallerySlider = document.querySelector("#galeria .gallery-slider");
+      const galleryPrev = document.querySelector("#galeria .gallery-nav-prev");
+      const galleryNext = document.querySelector("#galeria .gallery-nav-next");
+      const gallerySlides = Array.from(document.querySelectorAll("#galeria .gallery-slide"));
       const lightbox = document.getElementById("lightbox");
       const lightboxImg = document.querySelector(".lightbox-image");
       const closeBtn = document.querySelector(".lightbox-close");
+      const lightboxPrev = document.querySelector(".lightbox-nav-prev");
+      const lightboxNext = document.querySelector(".lightbox-nav-next");
 
-      if (!galleryImages.length || !lightbox || !lightboxImg || !closeBtn) {
+      if (!galleryImages.length || !lightbox || !lightboxImg || !closeBtn || !gallerySlider || !lightboxPrev || !lightboxNext) {
         return;
       }
 
+      const galleryList = Array.from(galleryImages);
+      let currentIndex = 0;
+      let isLightboxOpen = false;
+      let lockedScrollY = 0;
+      let swipeStartX = null;
+      let currentGalleryIndex = 0;
+      let galleryNavLocked = false;
+      let gallerySyncTimer = null;
+
+      const lockPageScroll = () => {
+        lockedScrollY = window.scrollY || window.pageYOffset || 0;
+        document.body.classList.add("lightbox-open");
+        document.body.style.top = `-${lockedScrollY}px`;
+      };
+
+      const unlockPageScroll = () => {
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        document.body.classList.remove("lightbox-open");
+        document.body.style.top = "";
+        window.scrollTo({ top: lockedScrollY, left: 0, behavior: "auto" });
+        window.requestAnimationFrame(() => {
+          root.style.scrollBehavior = previousScrollBehavior;
+        });
+      };
+
+      const syncGalleryIndexFromScroll = () => {
+        if (!gallerySlides.length) {
+          return;
+        }
+
+        const viewportCenter = gallerySlider.scrollLeft + (gallerySlider.clientWidth / 2);
+        let nearestIndex = 0;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+
+        gallerySlides.forEach((slide, index) => {
+          const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+          const distance = Math.abs(slideCenter - viewportCenter);
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = index;
+          }
+        });
+
+        currentGalleryIndex = nearestIndex;
+      };
+
+      const goToGalleryIndex = (index) => {
+        if (!gallerySlides.length) {
+          return;
+        }
+
+        const maxIndex = gallerySlides.length - 1;
+        const nextIndex = Math.max(0, Math.min(maxIndex, index));
+        const targetSlide = gallerySlides[nextIndex];
+        if (!targetSlide) {
+          return;
+        }
+
+        currentGalleryIndex = nextIndex;
+        galleryNavLocked = true;
+        gallerySlider.scrollTo({ left: targetSlide.offsetLeft, behavior: "smooth" });
+
+        if (gallerySyncTimer) {
+          window.clearTimeout(gallerySyncTimer);
+        }
+        gallerySyncTimer = window.setTimeout(() => {
+          galleryNavLocked = false;
+          syncGalleryIndexFromScroll();
+        }, 420);
+      };
+
+      if (galleryPrev && galleryNext) {
+        galleryPrev.addEventListener("click", () => {
+          if (galleryNavLocked) {
+            return;
+          }
+          syncGalleryIndexFromScroll();
+          goToGalleryIndex(currentGalleryIndex - 1);
+        });
+
+        galleryNext.addEventListener("click", () => {
+          if (galleryNavLocked) {
+            return;
+          }
+          syncGalleryIndexFromScroll();
+          goToGalleryIndex(currentGalleryIndex + 1);
+        });
+      }
+
+      gallerySlider.addEventListener("scroll", () => {
+        if (galleryNavLocked) {
+          return;
+        }
+        if (gallerySyncTimer) {
+          window.clearTimeout(gallerySyncTimer);
+        }
+        gallerySyncTimer = window.setTimeout(syncGalleryIndexFromScroll, 90);
+      }, { passive: true });
+
+      window.addEventListener("resize", () => {
+        if (gallerySyncTimer) {
+          window.clearTimeout(gallerySyncTimer);
+        }
+        gallerySyncTimer = window.setTimeout(syncGalleryIndexFromScroll, 120);
+      }, { passive: true });
+
+      syncGalleryIndexFromScroll();
+
+      const updateLightboxImage = () => {
+        const image = galleryList[currentIndex];
+        if (!image) {
+          return;
+        }
+        lightboxImg.src = image.src;
+        lightboxImg.alt = image.alt || "Imagen ampliada";
+      };
+
+      const openLightbox = (index) => {
+        currentIndex = index;
+        updateLightboxImage();
+        lockPageScroll();
+        lightbox.style.display = "flex";
+        lightbox.setAttribute("aria-hidden", "false");
+        isLightboxOpen = true;
+      };
+
+      const navigateLightbox = (direction) => {
+        if (!isLightboxOpen) {
+          return;
+        }
+        const total = galleryList.length;
+        currentIndex = (currentIndex + direction + total) % total;
+        updateLightboxImage();
+      };
+
       const closeLightbox = () => {
+        if (!isLightboxOpen) {
+          return;
+        }
         lightbox.style.display = "none";
         lightbox.setAttribute("aria-hidden", "true");
         lightboxImg.src = "";
+        isLightboxOpen = false;
+        unlockPageScroll();
       };
 
-      galleryImages.forEach((img) => {
+      galleryImages.forEach((img, index) => {
         img.addEventListener("click", () => {
-          lightbox.style.display = "flex";
-          lightbox.setAttribute("aria-hidden", "false");
-          lightboxImg.src = img.src;
-          lightboxImg.alt = img.alt || "Imagen ampliada";
+          openLightbox(index);
         });
       });
 
       closeBtn.addEventListener("click", closeLightbox);
+      lightboxPrev.addEventListener("click", () => navigateLightbox(-1));
+      lightboxNext.addEventListener("click", () => navigateLightbox(1));
+
+      const preventLightboxScroll = (event) => {
+        if (isLightboxOpen) {
+          event.preventDefault();
+        }
+      };
+
+      lightbox.addEventListener("wheel", preventLightboxScroll, { passive: false });
+      lightbox.addEventListener("touchmove", preventLightboxScroll, { passive: false });
+
+      lightbox.addEventListener("touchstart", (event) => {
+        const touch = event.changedTouches && event.changedTouches[0];
+        swipeStartX = touch ? touch.clientX : null;
+      }, { passive: true });
+
+      lightbox.addEventListener("touchend", (event) => {
+        const touch = event.changedTouches && event.changedTouches[0];
+        if (!touch || swipeStartX === null) {
+          return;
+        }
+        const deltaX = touch.clientX - swipeStartX;
+        swipeStartX = null;
+        if (Math.abs(deltaX) < 44) {
+          return;
+        }
+        navigateLightbox(deltaX > 0 ? -1 : 1);
+      }, { passive: true });
 
       lightbox.addEventListener("click", (e) => {
         if (e.target === lightbox) {
@@ -1043,8 +1237,21 @@
       });
 
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && lightbox.style.display === "flex") {
+        if (!isLightboxOpen) {
+          return;
+        }
+        if (e.key === "Escape") {
           closeLightbox();
+          return;
+        }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          navigateLightbox(-1);
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          navigateLightbox(1);
         }
       });
     });
@@ -1260,7 +1467,9 @@
           footerBottom2: "Todos los derechos reservados",
           creatorCredit: "Sitio web creado por Cyberground",
           creatorWhatsAppMessage: "Hola, me gustaria encargar trabajo de sitio web/promocion/servicios tecnicos",
-          lightboxClose: "Cerrar vista ampliada"
+          lightboxClose: "Cerrar vista ampliada",
+          lightboxPrev: "Imagen anterior",
+          lightboxNext: "Imagen siguiente"
         },
         en: {
           title: "Signature Architecture Riudecanyes",
@@ -1397,7 +1606,9 @@
           footerBottom2: "All rights reserved",
           creatorCredit: "Website by Cyberground",
           creatorWhatsAppMessage: "Hello, I would like to order your services for website work/marketing/technical services",
-          lightboxClose: "Close enlarged image"
+          lightboxClose: "Close enlarged image",
+          lightboxPrev: "Previous image",
+          lightboxNext: "Next image"
         },
         ru: {
           title: "Авторская архитектура в Риудеканьесе",
@@ -1534,7 +1745,9 @@
           footerBottom2: "Все права защищены",
           creatorCredit: "Сайт сделан Cyberground",
           creatorWhatsAppMessage: "Здравствуйте, хотелось бы заказать у вас работу по сайту/продвижению/техническим услугам",
-          lightboxClose: "Закрыть увеличенное изображение"
+          lightboxClose: "Закрыть увеличенное изображение",
+          lightboxPrev: "Предыдущее изображение",
+          lightboxNext: "Следующее изображение"
         }
       };
 
@@ -1759,6 +1972,16 @@
         const lightboxClose = document.querySelector('.lightbox-close');
         if (lightboxClose) {
           lightboxClose.setAttribute('aria-label', dict.lightboxClose);
+        }
+
+        const lightboxPrev = document.querySelector('.lightbox-nav-prev');
+        if (lightboxPrev) {
+          lightboxPrev.setAttribute('aria-label', dict.lightboxPrev);
+        }
+
+        const lightboxNext = document.querySelector('.lightbox-nav-next');
+        if (lightboxNext) {
+          lightboxNext.setAttribute('aria-label', dict.lightboxNext);
         }
 
         langButtons.forEach((btn) => {
