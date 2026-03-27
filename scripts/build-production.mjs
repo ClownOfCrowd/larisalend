@@ -11,6 +11,7 @@ const root = process.cwd();
 const srcIndex = path.join(root, 'index.html');
 const srcStyles = path.join(root, 'styles.css');
 const srcMedia = path.join(root, 'media');
+const staticFiles = ['privacy.html', 'robots.txt', 'sitemap.xml'];
 
 const distDir = path.join(root, 'dist');
 const distMedia = path.join(distDir, 'media');
@@ -176,6 +177,22 @@ async function copyOrOptimizeMedia() {
   }
 }
 
+async function copyStaticFiles() {
+  for (const fileName of staticFiles) {
+    const inputPath = path.join(root, fileName);
+    const outputPath = path.join(distDir, fileName);
+
+    try {
+      await fs.copyFile(inputPath, outputPath);
+    } catch (error) {
+      if (error && error.code === 'ENOENT') {
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
 async function getDirectorySizeBytes(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   let total = 0;
@@ -202,6 +219,7 @@ async function main() {
   await minifyStyles();
   await minifyIndex();
   await copyOrOptimizeMedia();
+  await copyStaticFiles();
 
   const sourceSize = await getDirectorySizeBytes(srcMedia);
   const distSize = await getDirectorySizeBytes(distMedia);

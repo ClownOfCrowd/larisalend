@@ -3,8 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Arquitectura de autor en Riudecanyes. Vivienda diseñada por Miguel María Aragonés en 1976 con vistas al mar, gran parcela y licencia turística.">
-  <title>Arquitectura de autor Riudecanyes</title>
+  <title>Casa de autor en Riudecanyes con vistas al mar | Propiedad exclusiva Costa Daurada</title>
+  <meta name="description" content="Propiedad única en Riudecanyes (Tarragona). Vivienda de autor con vistas al mar, parcela de 7.000 m², licencia turística y gran potencial de inversión.">
+  <meta name="keywords" content="casa Riudecanyes, propiedad Tarragona, casa con vistas al mar, finca Costa Daurada, inversión inmobiliaria España">
+  <link rel="canonical" href="https://TU-DOMINIO.com">
+
+  <meta property="og:title" content="Propiedad exclusiva en Riudecanyes · Arquitectura de autor">
+  <meta property="og:description" content="Casa única con vistas al mar y montaña en la Costa Daurada. 7.000 m² de parcela.">
+  <meta property="og:image" content="https://TU-DOMINIO.com/media/preview.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://TU-DOMINIO.com">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Casa exclusiva en Riudecanyes">
+  <meta name="twitter:description" content="Propiedad única con vistas al mar en Tarragona">
+  <meta name="twitter:image" content="https://TU-DOMINIO.com/media/preview.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1086,11 +1100,19 @@
     <button class="lightbox-nav lightbox-nav-prev" type="button" aria-label="Imagen anterior">
       <span aria-hidden="true">&#8592;</span>
     </button>
-    <img class="lightbox-image" src="" alt="">
+    <img class="lightbox-image" src="" alt="" loading="lazy" decoding="async">
     <button class="lightbox-nav lightbox-nav-next" type="button" aria-label="Imagen siguiente">
       <span aria-hidden="true">&#8594;</span>
     </button>
     <button class="lightbox-close" type="button" aria-label="Cerrar vista ampliada">&times;</button>
+  </div>
+
+  <div class="cookie-banner" id="cookie-banner" role="region" aria-label="Aviso de cookies" aria-live="polite" hidden>
+    <p>
+      Este sitio utiliza cookies para mejorar la experiencia de navegación.
+      <a href="privacy.html">Política de privacidad</a>
+    </p>
+    <button id="accept-cookies" type="button">Aceptar</button>
   </div>
 
   <script>
@@ -1477,6 +1499,52 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const cookieKey = "cookieConsentAccepted";
+      const cookieBanner = document.getElementById("cookie-banner");
+      const acceptCookiesButton = document.getElementById("accept-cookies");
+
+      if (cookieBanner && acceptCookiesButton) {
+        const hasCookieConsent = () => {
+          try {
+            return localStorage.getItem(cookieKey) === "1";
+          } catch (error) {
+            return document.cookie.split(";").some((part) => part.trim() === `${cookieKey}=1`);
+          }
+        };
+
+        const setCookieConsent = () => {
+          try {
+            localStorage.setItem(cookieKey, "1");
+          } catch (error) {
+            document.cookie = `${cookieKey}=1; path=/; max-age=31536000; SameSite=Lax`;
+          }
+        };
+
+        const showCookieBanner = () => {
+          cookieBanner.hidden = false;
+          window.requestAnimationFrame(() => {
+            cookieBanner.classList.add("is-visible");
+          });
+        };
+
+        const hideCookieBanner = () => {
+          cookieBanner.classList.remove("is-visible");
+          window.setTimeout(() => {
+            cookieBanner.hidden = true;
+          }, 220);
+        };
+
+        const consentGiven = hasCookieConsent();
+        if (!consentGiven) {
+          showCookieBanner();
+        }
+
+        acceptCookiesButton.addEventListener("click", () => {
+          setCookieConsent();
+          hideCookieBanner();
+        });
+      }
+
       const storageKey = "siteLang";
       const fallbackLang = "es";
       const switcher = document.querySelector(".language-switcher");
@@ -2213,6 +2281,27 @@
       const initialLang = translations[savedLang] ? savedLang : fallbackLang;
       applyLanguage(initialLang);
     });
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Residence",
+    "name": "Casa en Riudecanyes",
+    "description": "Vivienda de autor con vistas al mar en Tarragona",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Riudecanyes",
+      "addressRegion": "Tarragona",
+      "addressCountry": "ES"
+    },
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": 316,
+      "unitCode": "MTK"
+    },
+    "numberOfRooms": 9
+  }
   </script>
 
 </body>
