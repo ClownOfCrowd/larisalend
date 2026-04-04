@@ -1,4 +1,4 @@
 User-agent: *
-Allow: /
+Disallow:
 
-Sitemap: https://TU-DOMINIO.com/sitemap.xml
+Sitemap: https://riudecanyesvilla.com/sitemap.xml
