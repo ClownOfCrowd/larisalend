@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://riudecanyesvilla.com/sitemap.xml
+Sitemap: https://www.riudecanyesvilla.com/sitemap.xml

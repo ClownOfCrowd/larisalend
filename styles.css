@@ -22,6 +22,72 @@ body {
   overflow-x: hidden;
 }
 
+body.boot-loading {
+  overflow: hidden;
+}
+
+body.boot-loading .site-header,
+body.boot-loading main,
+body.boot-loading .chat-ctas,
+body.boot-loading .sticky-cta {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.site-header,
+main,
+.chat-ctas,
+.sticky-cta {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.boot-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background:
+    radial-gradient(110% 80% at 15% 20%, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0) 58%),
+    radial-gradient(90% 70% at 85% 10%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 62%),
+    linear-gradient(180deg, #101214 0%, #15191f 100%);
+  color: #f1f1f1;
+  opacity: 1;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.boot-preloader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot-preloader-mark {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #d4af37;
+  animation: bootSpin 0.95s linear infinite;
+}
+
+.boot-preloader p {
+  margin: 0;
+  letter-spacing: 0.08em;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  color: rgba(241, 241, 241, 0.88);
+}
+
+@keyframes bootSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 body.lightbox-open {
   position: fixed;
   left: 0;
@@ -155,6 +221,11 @@ iframe {
   isolation: isolate;
   scroll-margin-top: calc(var(--header-offset) + 14px);
   transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease;
+}
+
+main > .block:not(:first-child) {
+  content-visibility: auto;
+  contain-intrinsic-size: 960px;
 }
 
 .video-bg,
@@ -1271,8 +1342,13 @@ ul {
 }
 
 .agente-media img {
+  display: block;
   width: 100%;
   max-width: 320px;
+  height: auto;
+  aspect-ratio: 1043 / 1612;
+  object-fit: cover;
+  object-position: center top;
   border-radius: 8px;
   border: 1px solid #e8e8e8;
 }
@@ -2647,6 +2723,25 @@ ul {
 }
 
 @media (max-width: 1024px) {
+  .parallax-bg,
+  .parallax-bg img,
+  .parallax-bg video,
+  .parallax-content,
+  .reveal {
+    will-change: auto;
+  }
+
+  .language-switcher,
+  .gallery-nav,
+  .lightbox-nav,
+  .lightbox-close,
+  .sticky-cta,
+  .chat-cta,
+  .cookie-banner,
+  #contacto form {
+    backdrop-filter: none;
+  }
+
   #contacto form {
     margin-top: 16px;
     padding: 18px;
@@ -2657,7 +2752,41 @@ ul {
     border: 1px solid rgba(255, 255, 255, 0.24);
     border-radius: 14px;
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
-    backdrop-filter: blur(8px);
+    backdrop-filter: none;
+  }
+
+  .gallery-slide,
+  .ventajas-propiedad-block .dato-card,
+  .escenarios-vida-block .escenario-card,
+  .casa-historia-item,
+  .ventaja-columna,
+  .agente-grid .agente-content,
+  .investment-plan,
+  .investment-photo img {
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+  }
+
+  .gallery-slide:hover img,
+  .gallery-slide:focus img,
+  .gallery-slide:focus-within img,
+  .gallery-slide.touch-active img,
+  .agente-grid .agente-content:hover,
+  .agente-grid .agente-content:focus-within,
+  .casa-historia-item:hover,
+  .casa-historia-item:focus-within,
+  .dato-card:hover,
+  .dato-card:focus-within,
+  .escenario-card:hover,
+  .escenario-card:focus-within,
+  .ventaja-columna:hover,
+  .ventaja-columna:focus-within,
+  .investment-photo:hover img,
+  .investment-photo:focus-within img,
+  .investment-plan:hover img,
+  .investment-plan:focus-within img {
+    transform: none;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+    filter: none;
   }
 
   #contacto form input,
@@ -3441,14 +3570,14 @@ ul {
 
 .reveal {
   opacity: 0;
-  transform: translate3d(0, calc(40px + var(--parallax-y, 0px)), 0);
+  transform: translate3d(0, 40px, 0);
   transition: opacity 0.8s ease, transform 0.8s ease;
   will-change: opacity, transform;
 }
 
 .reveal-visible {
   opacity: 1;
-  transform: translate3d(0, var(--parallax-y, 0px), 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .reveal-delay-1 { transition-delay: 0.15s; }
@@ -3518,19 +3647,19 @@ ul {
 .parallax-bg,
 .parallax-bg img,
 .parallax-bg video {
-  will-change: transform;
+  will-change: auto;
 }
 
 .parallax-bg {
-  transform: translate3d(0, var(--parallax-y, 0px), 0);
+  transform: none;
 }
 
 .parallax-content {
-  will-change: transform, opacity;
+  will-change: auto;
 }
 
 .parallax-content:not(.reveal) {
-  transform: translate3d(0, var(--parallax-y, 0px), 0);
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

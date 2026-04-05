@@ -11,13 +11,43 @@ const root = process.cwd();
 const srcIndex = path.join(root, 'index.html');
 const srcStyles = path.join(root, 'styles.css');
 const srcMedia = path.join(root, 'media');
-const staticFiles = ['privacy.html', 'robots.txt', 'sitemap.xml'];
+const staticFiles = ['privacy.html', 'robots.txt', 'sitemap.xml', 'translations-data.js'];
 
 const distDir = path.join(root, 'dist');
 const distMedia = path.join(distDir, 'media');
 
 const IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 const VIDEO_EXTENSIONS = new Set(['.mp4', '.webm']);
+
+const VIDEO_PROFILE_RULES = [
+  { pattern: /dronecutbg/i, profile: 'hero' },
+  { pattern: /footer-bg|galeria-bg/i, profile: 'high' },
+  { pattern: /historia-bg|fondofooter|ubicacion-bg|moneda-bg|vivir-riudecanyes-bg/i, profile: 'balanced' }
+];
+
+const VIDEO_PROFILES = {
+  hero: {
+    mp4: { bitrate: '3.8M', maxrate: '5M', bufsize: '7M', crf: '22', preset: 'medium' },
+    webm: { bitrate: '3.2M', maxrate: '4.4M', bufsize: '6M', crf: '33' }
+  },
+  high: {
+    mp4: { bitrate: '3M', maxrate: '4.2M', bufsize: '6M', crf: '23', preset: 'medium' },
+    webm: { bitrate: '2.6M', maxrate: '3.8M', bufsize: '5M', crf: '34' }
+  },
+  balanced: {
+    mp4: { bitrate: '2.2M', maxrate: '3.2M', bufsize: '4.5M', crf: '24', preset: 'medium' },
+    webm: { bitrate: '2M', maxrate: '3M', bufsize: '4M', crf: '35' }
+  },
+  default: {
+    mp4: { bitrate: '1.8M', maxrate: '2.8M', bufsize: '4M', crf: '25', preset: 'medium' },
+    webm: { bitrate: '1.6M', maxrate: '2.4M', bufsize: '3.2M', crf: '36' }
+  }
+};
+
+function getVideoProfile(fileName) {
+  const rule = VIDEO_PROFILE_RULES.find((entry) => entry.pattern.test(fileName));
+  return VIDEO_PROFILES[rule?.profile || 'default'];
+}
 
 async function ensureCleanDist() {
   await fs.rm(distDir, { recursive: true, force: true });
@@ -74,30 +104,36 @@ function runFfmpeg(args) {
   });
 }
 
-async function optimizeVideo(inputPath, outputPath, ext) {
+async function optimizeVideo(inputPath, outputPath, ext, fileName) {
   const tempOutput = `${outputPath}.tmp${ext}`;
+  const profile = getVideoProfile(fileName);
+  const settings = ext === '.webm' ? profile.webm : profile.mp4;
 
   const common = ['-hide_banner', '-loglevel', 'error', '-y', '-i', inputPath, '-an'];
   const args = ext === '.webm'
     ? [
         ...common,
         '-c:v', 'libvpx-vp9',
-        '-b:v', '4M',
-        '-maxrate', '6M',
-        '-bufsize', '8M',
+        '-b:v', settings.bitrate,
+        '-maxrate', settings.maxrate,
+        '-bufsize', settings.bufsize,
+        '-crf', settings.crf,
         '-deadline', 'good',
+        '-tile-columns', '1',
+        '-row-mt', '1',
         '-pix_fmt', 'yuv420p',
         tempOutput
       ]
     : [
         ...common,
         '-c:v', 'libx264',
-        '-preset', 'medium',
+        '-preset', settings.preset,
         '-profile:v', 'high',
         '-level', '4.1',
-        '-b:v', '5M',
-        '-maxrate', '6M',
-        '-bufsize', '10M',
+        '-b:v', settings.bitrate,
+        '-maxrate', settings.maxrate,
+        '-bufsize', settings.bufsize,
+        '-crf', settings.crf,
         '-pix_fmt', 'yuv420p',
         '-movflags', '+faststart',
         tempOutput
@@ -166,7 +202,7 @@ async function copyOrOptimizeMedia() {
       if (IMAGE_EXTENSIONS.has(ext)) {
         await optimizeImage(inputPath, outputPath, ext);
       } else if (VIDEO_EXTENSIONS.has(ext) && ffmpegPath) {
-        await optimizeVideo(inputPath, outputPath, ext);
+        await optimizeVideo(inputPath, outputPath, ext, entry.name);
       } else {
         await fs.copyFile(inputPath, outputPath);
       }
