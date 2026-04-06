@@ -1,4 +1,4 @@
-�<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -6,13 +6,20 @@
   <title>Casa de autor en Riudecanyes con vistas al mar | Propiedad exclusiva Costa Daurada</title>
   <meta name="description" content="Propiedad única en Riudecanyes (Tarragona). Vivienda de autor con vistas al mar, parcela de 7.000 m², licencia turística y gran potencial de inversión.">
   <meta name="keywords" content="casa Riudecanyes, propiedad Tarragona, casa con vistas al mar, finca Costa Daurada, inversión inmobiliaria España">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="canonical" href="https://www.riudecanyesvilla.com/">
+  <link rel="alternate" hreflang="es" href="https://www.riudecanyesvilla.com/?lang=es">
+  <link rel="alternate" hreflang="en" href="https://www.riudecanyesvilla.com/?lang=en">
+  <link rel="alternate" hreflang="ru" href="https://www.riudecanyesvilla.com/?lang=ru">
+  <link rel="alternate" hreflang="x-default" href="https://www.riudecanyesvilla.com/">
 
   <meta property="og:title" content="Propiedad exclusiva en Riudecanyes · Arquitectura de autor">
   <meta property="og:description" content="Casa única con vistas al mar y montaña en la Costa Daurada. 7.000 m² de parcela.">
   <meta property="og:image" content="https://www.riudecanyesvilla.com/media/aerea-1.jpg">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.riudecanyesvilla.com/">
+  <meta property="og:site_name" content="Riudecanyes Villa">
+  <meta property="og:locale" content="es_ES">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Casa exclusiva en Riudecanyes">
@@ -66,7 +73,7 @@
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="hero-content parallax-content">
       <h1>Arquitectura de autor en Riudecanyes · 1976</h1>
-      <p class="hero-price">1,280,000 ��</p>
+      <p class="hero-price">1,280,000 EUR</p>
       <p class="hero-subtitle">
         316 m² útiles · 1.138 m² construidos · Parcela 7.057 m² · Licencia turística · A 20 min del mar · A 100 km de Barcelona
       </p>
@@ -211,10 +218,10 @@
       <h2>Ubicación</h2>
       <div class="ubicacion-columns">
         <div class="col text">
-          <p>Riudecanyes, en la falda de la sierra de l�"Argentera, entre la montaña y el mar.</p>
+          <p>Riudecanyes, en la falda de la sierra de l'Argentera, entre la montaña y el mar.</p>
           <p>Un entorno natural tranquilo, con orientación sur y vistas abiertas hacia el paisaje mediterráneo.</p>
           <p>A pocos minutos se encuentra el Embalse de Riudecanyes, un lugar conocido por sus rutas, naturaleza y actividades al aire libre.</p>
-          <p>Las playas de la Costa Daurada están a unos 15�20 minutos en coche, mientras que ciudades como Tarragona, Reus o Barcelona permiten mantener una conexión directa con cultura, servicios y transporte.</p>
+          <p>Las playas de la Costa Daurada están a unos 15-20 minutos en coche, mientras que ciudades como Tarragona, Reus o Barcelona permiten mantener una conexión directa con cultura, servicios y transporte.</p>
         </div>
         <div class="col map">
           <iframe 
@@ -337,7 +344,7 @@
       <ul>
         <li class="reveal reveal-delay-1">Residencia privada</li>
         <li class="reveal reveal-delay-2">Alquiler turístico (con licencia turística)</li>
-        <li class="reveal reveal-delay-3">Base para un proyecto de alojamiento tipo �Sboutique⬝</li>
+        <li class="reveal reveal-delay-3">Base para un proyecto de alojamiento tipo boutique</li>
         <li class="reveal reveal-delay-3">Base para un proyecto de retiro</li>
       </ul>
     </div>
@@ -394,7 +401,7 @@
           <p class="investment-text-3 reveal reveal-delay-3">La operación se plantea como una compra conjunta de ambos activos, con una inversión total de:</p>
 
           <div class="investment-price reveal reveal-delay-3" aria-label="Inversión total">
-            <span>2.000.000 ��</span>
+            <span>2.000.000 EUR</span>
           </div>
 
           <p class="investment-text-4 reveal reveal-delay-3">
@@ -436,11 +443,11 @@
 
       <form class="hipoteca-form">
         <div class="form-group">
-          <label for="monto">Monto de la propiedad (��)</label>
+          <label for="monto">Monto de la propiedad (EUR)</label>
           <input type="number" id="monto" placeholder="1.280.000">
         </div>
         <div class="form-group">
-          <label for="enganche">Pago inicial (��)</label>
+          <label for="enganche">Pago inicial (EUR)</label>
           <input type="number" id="enganche" placeholder="256.000">
         </div>
         <div class="form-group">
@@ -455,7 +462,7 @@
         <button type="submit">Calcular</button>
       </form>
 
-      <p class="resultado">Pago mensual estimado: <span>---</span> ��</p>
+      <p class="resultado">Pago mensual estimado: <span>---</span> EUR</p>
     </div>
   </section>
 
@@ -503,9 +510,13 @@
     <h2>Solicitar información o concertar visita</h2>
     <p>Si desea más detalles o coordinar una visita, deje sus datos de contacto.</p>
     <p>Atención personalizada y coordinación directa de visita.</p>
-    <form class="reveal parallax-content">
-      <input type="text" name="nombre" placeholder="Nombre">
-      <input type="tel" name="telefono" placeholder="Teléfono">
+    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/info@inmolarisa.com" method="POST">
+      <input type="hidden" name="_subject" value="Nueva solicitud desde riudecanyesvilla.com">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_honey" value="">
+      <input type="text" name="nombre" placeholder="Nombre" required minlength="2" maxlength="80" autocomplete="name">
+      <input type="tel" name="telefono" placeholder="Teléfono" maxlength="30" autocomplete="tel">
       <select name="horario" aria-label="Franja horaria preferida">
         <option value="" selected disabled>Franja horaria preferida (09:00-20:00)</option>
         <option value="09:00-10:00">09:00 - 10:00</option>
@@ -520,8 +531,9 @@
         <option value="18:00-19:00">18:00 - 19:00</option>
         <option value="19:00-20:00">19:00 - 20:00</option>
       </select>
-      <input type="email" name="email" placeholder="Datos de contacto (correo, mensajero)">
+      <input type="email" name="email" placeholder="Datos de contacto (correo, mensajero)" required maxlength="120" autocomplete="email">
       <button type="submit">Enviar</button>
+      <p class="contact-form-status" id="contact-form-status" role="status" aria-live="polite" hidden></p>
     </form>
   </section>
 
@@ -666,7 +678,7 @@
     const getMenuLabels = () => {
       const lang = (document.documentElement.lang || 'es').toLowerCase();
       if (lang.startsWith('ru')) {
-        return { open: '�~�кѬ�9��R мен�}', close: '�акѬ�9��R мен�}' };
+        return { open: 'Open menu', close: 'Close menu' };
       }
       if (lang.startsWith('en')) {
         return { open: 'Open menu', close: 'Close menu' };
@@ -1731,6 +1743,102 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const contactForm = document.getElementById("contact-form");
+      const statusNode = document.getElementById("contact-form-status");
+
+      if (!contactForm || !statusNode) {
+        return;
+      }
+
+      const submitButton = contactForm.querySelector('button[type="submit"]');
+      const endpoint = "https://formsubmit.co/ajax/info@inmolarisa.com";
+
+      const getMessages = () => {
+        const lang = (document.documentElement.lang || "es").toLowerCase();
+        if (lang.startsWith("en")) {
+          return {
+            sending: "Sending request...",
+            success: "Request sent. We will contact you shortly.",
+            invalid: "Please provide a valid name and email.",
+            error: "Could not send right now. Please try again in a few minutes."
+          };
+        }
+        if (lang.startsWith("ru")) {
+          return {
+            sending: "Отправляем заявку...",
+            success: "Заявка отправлена. Мы свяжемся с вами в ближайшее время.",
+            invalid: "Пожалуйста, укажите корректные имя и email.",
+            error: "Сейчас не удалось отправить заявку. Повторите попытку чуть позже."
+          };
+        }
+        return {
+          sending: "Enviando solicitud...",
+          success: "Solicitud enviada. Nos pondremos en contacto pronto.",
+          invalid: "Por favor, indique un nombre y email válidos.",
+          error: "No fue posible enviar ahora. Inténtelo de nuevo en unos minutos."
+        };
+      };
+
+      const showStatus = (message, isError = false) => {
+        statusNode.hidden = false;
+        statusNode.textContent = message;
+        statusNode.classList.toggle("is-error", isError);
+        statusNode.classList.toggle("is-success", !isError);
+      };
+
+      contactForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const messages = getMessages();
+        const nameInput = contactForm.querySelector('input[name="nombre"]');
+        const emailInput = contactForm.querySelector('input[name="email"]');
+
+        const name = (nameInput?.value || "").trim();
+        const email = (emailInput?.value || "").trim();
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        if (name.length < 2 || !emailOk) {
+          showStatus(messages.invalid, true);
+          return;
+        }
+
+        if (submitButton) {
+          submitButton.disabled = true;
+        }
+        showStatus(messages.sending, false);
+
+        try {
+          const formData = new FormData(contactForm);
+          formData.set("_subject", "Nueva solicitud desde riudecanyesvilla.com");
+          formData.set("site", window.location.hostname || "riudecanyesvilla.com");
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json"
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`Request failed with ${response.status}`);
+          }
+
+          contactForm.reset();
+          showStatus(messages.success, false);
+        } catch (error) {
+          showStatus(messages.error, true);
+        } finally {
+          if (submitButton) {
+            submitButton.disabled = false;
+          }
+        }
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
       let isInitialized = false;
 
       const initCookieAndLanguage = () => {
@@ -1787,6 +1895,7 @@
 
         const storageKey = "siteLang";
         const fallbackLang = "es";
+        const supportedLangs = new Set(["es", "en", "ru"]);
         const switcher = document.querySelector(".language-switcher");
         const langButtons = document.querySelectorAll(".lang-btn");
 
@@ -1816,6 +1925,12 @@
             if (!loaded || typeof loaded !== "object") {
               reject(new Error("Translations payload is missing or invalid"));
               return;
+            }
+            if (!loaded.ru || typeof loaded.ru !== "object" || Object.keys(loaded.ru).length === 0) {
+              loaded.ru = loaded.en || loaded.es;
+            }
+            if (loaded.ru && loaded.ru.navToggleOpen && /�/.test(loaded.ru.navToggleOpen)) {
+              loaded.ru = loaded.en || loaded.es;
             }
             translationsCache = loaded;
             resolve(translationsCache);
@@ -1852,6 +1967,20 @@
         }
       };
 
+        const updateLangInUrl = (lang) => {
+          try {
+            const url = new URL(window.location.href);
+            if (lang === fallbackLang) {
+              url.searchParams.delete("lang");
+            } else {
+              url.searchParams.set("lang", lang);
+            }
+            window.history.replaceState(null, "", url.toString());
+          } catch (error) {
+            // Ignore URL API failures.
+          }
+        };
+
       const applyLanguage = async (lang) => {
         if (lang !== fallbackLang && !translationsCache) {
           try {
@@ -1862,7 +1991,9 @@
         }
 
         const translations = getTranslations();
-        const dict = translations[lang] || translations[fallbackLang];
+        const candidateDict = translations[lang];
+        const hasKeys = candidateDict && typeof candidateDict === "object" && Object.keys(candidateDict).length > 0;
+        const dict = hasKeys ? candidateDict : translations[fallbackLang];
 
         if (!dict) {
           document.documentElement.lang = fallbackLang;
@@ -2122,7 +2253,9 @@
             }
 
             const translations = getTranslations();
-            if (!translations[lang]) {
+            const candidateDict = translations[lang];
+            const hasKeys = candidateDict && typeof candidateDict === "object" && Object.keys(candidateDict).length > 0;
+            if (!hasKeys) {
               return;
             }
           }
@@ -2134,8 +2267,18 @@
           }
 
           await applyLanguage(lang);
+          updateLangInUrl(lang);
         });
       });
+
+      let queryLang = null;
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const requested = (params.get("lang") || "").toLowerCase();
+        queryLang = supportedLangs.has(requested) ? requested : null;
+      } catch (error) {
+        queryLang = null;
+      }
 
       let savedLang = null;
       try {
@@ -2146,7 +2289,9 @@
 
       let initialLang = fallbackLang;
 
-      if (savedLang) {
+      if (queryLang) {
+        initialLang = queryLang;
+      } else if (savedLang) {
         initialLang = savedLang;
       }
 
@@ -2189,6 +2334,27 @@
       "unitCode": "MTK"
     },
     "numberOfRooms": 9
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "Inmobiliaria Larisa",
+    "url": "https://www.riudecanyesvilla.com/",
+    "email": "info@inmolarisa.com",
+    "telephone": "+34 677 743 005",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Cambrils",
+      "addressRegion": "Tarragona",
+      "addressCountry": "ES"
+    },
+    "sameAs": [
+      "https://www.inmolarisa.com",
+      "https://www.idealista.com/en/pro/inmolarisa/"
+    ]
   }
   </script>
 

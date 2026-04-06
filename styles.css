@@ -2021,6 +2021,28 @@ ul {
   outline: none;
 }
 
+
+.contact-form-status {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(10, 10, 10, 0.32);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.contact-form-status.is-success {
+  border-color: rgba(86, 200, 140, 0.72);
+  background: rgba(20, 76, 48, 0.34);
+}
+
+.contact-form-status.is-error {
+  border-color: rgba(232, 114, 114, 0.75);
+  background: rgba(110, 26, 26, 0.34);
+}
 .lightbox {
   position: fixed;
   top: 0;
