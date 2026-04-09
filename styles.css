@@ -1997,6 +1997,29 @@ ul {
   text-underline-offset: 3px;
 }
 
+.cookie-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.cookie-btn {
+  flex: 1 1 150px;
+}
+
+.cookie-btn-essential {
+  border-color: rgba(255, 255, 255, 0.46) !important;
+  background: linear-gradient(135deg, #e7e7e7, #c8c8c8) !important;
+  color: #1b1b1b !important;
+}
+
+.cookie-btn-reject {
+  border-color: rgba(255, 145, 145, 0.55) !important;
+  background: linear-gradient(135deg, #ffd3d3, #f5a6a6) !important;
+  color: #441616 !important;
+}
+
 .cookie-banner button {
   width: auto;
   min-width: 122px;
@@ -2019,6 +2042,14 @@ ul {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
   filter: brightness(1.03);
   outline: none;
+}
+
+.hp-wrap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 
@@ -3399,8 +3430,16 @@ ul {
   }
 
   .cookie-banner button {
-    width: 100%;
+    width: auto;
     min-width: 0;
+  }
+
+  .cookie-actions {
+    width: 100%;
+  }
+
+  .cookie-btn {
+    flex: 1 1 100%;
   }
 
   .lightbox-nav {

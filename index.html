@@ -20,6 +20,9 @@
   <meta property="og:url" content="https://www.riudecanyesvilla.com/">
   <meta property="og:site_name" content="Riudecanyes Villa">
   <meta property="og:locale" content="es_ES">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' https: blob:; connect-src 'self' https://formsubmit.co; frame-src https://www.google.com https://www.google.com/maps https://maps.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Casa exclusiva en Riudecanyes">
@@ -510,11 +513,14 @@
     <h2>Solicitar información o concertar visita</h2>
     <p>Si desea más detalles o coordinar una visita, deje sus datos de contacto.</p>
     <p>Atención personalizada y coordinación directa de visita.</p>
-    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/anikanov.gleb@gmail.com" method="POST">
+    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/info@inmolarisa.com" method="POST">
       <input type="hidden" name="_subject" value="Nueva solicitud desde riudecanyesvilla.com">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_honey" value="">
+      <label class="hp-wrap" for="company-field" aria-hidden="true">Company
+        <input id="company-field" type="text" name="company" tabindex="-1" autocomplete="off">
+      </label>
       <input type="text" name="nombre" placeholder="Nombre" required minlength="2" maxlength="80" autocomplete="name">
       <input type="tel" name="telefono" placeholder="Teléfono" maxlength="30" autocomplete="tel">
       <select name="horario" aria-label="Franja horaria preferida">
@@ -1187,10 +1193,14 @@
 
   <div class="cookie-banner" id="cookie-banner" role="region" aria-label="Aviso de cookies" aria-live="polite" hidden>
     <p>
-      Este sitio utiliza cookies para mejorar la experiencia de navegación.
+      Este sitio utiliza cookies necesarias y opcionales para mejorar la experiencia.
       <a href="privacy.html">Política de privacidad</a>
     </p>
-    <button id="accept-cookies" type="button">Aceptar</button>
+    <div class="cookie-actions">
+      <button id="accept-cookies" class="cookie-btn cookie-btn-accept" type="button">Aceptar todo</button>
+      <button id="essential-cookies" class="cookie-btn cookie-btn-essential" type="button">Solo necesarias</button>
+      <button id="reject-cookies" class="cookie-btn cookie-btn-reject" type="button">Rechazar</button>
+    </div>
   </div>
 
   <script>
@@ -1753,8 +1763,12 @@
       const submitButton = contactForm.querySelector('button[type="submit"]');
       const actionUrl = contactForm.getAttribute("action") || "";
       const actionMatch = actionUrl.match(/formsubmit\.co\/(.+)$/i);
-      const targetEmail = (actionMatch && actionMatch[1] ? actionMatch[1] : "anikanov.gleb@gmail.com").replace(/^ajax\//i, "");
+      const targetEmail = (actionMatch && actionMatch[1] ? actionMatch[1] : "info@inmolarisa.com").replace(/^ajax\//i, "");
       const endpoint = `https://formsubmit.co/ajax/${targetEmail}`;
+      const rateLimitKey = "contactLastSubmissionAt";
+      const minFillTimeMs = 3500;
+      const cooldownMs = 60000;
+      contactForm.dataset.startedAt = String(Date.now());
 
       const getMessages = () => {
         const lang = (document.documentElement.lang || "es").toLowerCase();
@@ -1763,7 +1777,9 @@
             sending: "Sending request...",
             success: "Request sent. We will contact you shortly.",
             invalid: "Please provide a valid name and email.",
-            error: "Could not send right now. Please try again in a few minutes."
+            error: "Could not send right now. Please try again in a few minutes.",
+            cooldown: "Please wait a minute before sending another request.",
+            bot: "Request could not be validated. Please try again."
           };
         }
         if (lang.startsWith("ru")) {
@@ -1771,15 +1787,44 @@
             sending: "Отправляем заявку...",
             success: "Заявка отправлена. Мы свяжемся с вами в ближайшее время.",
             invalid: "Пожалуйста, укажите корректные имя и email.",
-            error: "Сейчас не удалось отправить заявку. Повторите попытку чуть позже."
+            error: "Сейчас не удалось отправить заявку. Повторите попытку чуть позже.",
+            cooldown: "Пожалуйста, подождите минуту перед повторной отправкой.",
+            bot: "Не удалось подтвердить корректность запроса. Повторите попытку."
           };
         }
         return {
           sending: "Enviando solicitud...",
           success: "Solicitud enviada. Nos pondremos en contacto pronto.",
           invalid: "Por favor, indique un nombre y email válidos.",
-          error: "No fue posible enviar ahora. Inténtelo de nuevo en unos minutos."
+          error: "No fue posible enviar ahora. Inténtelo de nuevo en unos minutos.",
+          cooldown: "Espere un minuto antes de enviar otra solicitud.",
+          bot: "No se pudo validar la solicitud. Inténtelo de nuevo."
         };
+      };
+
+      const getLastSubmissionAt = () => {
+        try {
+          return Number(localStorage.getItem(rateLimitKey) || 0);
+        } catch (error) {
+          try {
+            return Number(sessionStorage.getItem(rateLimitKey) || 0);
+          } catch (nestedError) {
+            return 0;
+          }
+        }
+      };
+
+      const setLastSubmissionAt = (value) => {
+        const stamp = String(value);
+        try {
+          localStorage.setItem(rateLimitKey, stamp);
+        } catch (error) {
+          try {
+            sessionStorage.setItem(rateLimitKey, stamp);
+          } catch (nestedError) {
+            // Ignore storage failures.
+          }
+        }
       };
 
       const showStatus = (message, isError = false) => {
@@ -1795,10 +1840,26 @@
         const messages = getMessages();
         const nameInput = contactForm.querySelector('input[name="nombre"]');
         const emailInput = contactForm.querySelector('input[name="email"]');
+        const honeypotInput = contactForm.querySelector('input[name="company"]');
 
         const name = (nameInput?.value || "").trim();
         const email = (emailInput?.value || "").trim();
+        const honeypot = (honeypotInput?.value || "").trim();
         const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        const startedAt = Number(contactForm.dataset.startedAt || 0);
+        const elapsed = Date.now() - startedAt;
+        const lastSubmissionAt = getLastSubmissionAt();
+
+        if (lastSubmissionAt && (Date.now() - lastSubmissionAt) < cooldownMs) {
+          showStatus(messages.cooldown, true);
+          return;
+        }
+
+        if (honeypot.length > 0 || !startedAt || elapsed < minFillTimeMs) {
+          showStatus(messages.bot, true);
+          return;
+        }
 
         if (name.length < 2 || !emailOk) {
           showStatus(messages.invalid, true);
@@ -1828,6 +1889,8 @@
           }
 
           contactForm.reset();
+          setLastSubmissionAt(Date.now());
+          contactForm.dataset.startedAt = String(Date.now());
           showStatus(messages.success, false);
         } catch (error) {
           showStatus(messages.error, true);
@@ -1850,25 +1913,81 @@
         }
         isInitialized = true;
 
-        const cookieKey = "cookieConsentAccepted";
+        const consentKey = "cookieConsentMode";
+        const legacyCookieKey = "cookieConsentAccepted";
         const cookieBanner = document.getElementById("cookie-banner");
         const acceptCookiesButton = document.getElementById("accept-cookies");
+        const essentialCookiesButton = document.getElementById("essential-cookies");
+        const rejectCookiesButton = document.getElementById("reject-cookies");
 
-        if (cookieBanner && acceptCookiesButton) {
-          const hasCookieConsent = () => {
+        if (cookieBanner && acceptCookiesButton && essentialCookiesButton && rejectCookiesButton) {
+          const readCookie = (key) => {
+            const prefix = `${key}=`;
+            const value = document.cookie
+              .split(";")
+              .map((part) => part.trim())
+              .find((part) => part.startsWith(prefix));
+            return value ? decodeURIComponent(value.slice(prefix.length)) : null;
+          };
+
+          const writeCookie = (key, value) => {
+            document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`;
+          };
+
+          const clearLanguagePreference = () => {
             try {
-              return localStorage.getItem(cookieKey) === "1";
+              localStorage.removeItem("siteLang");
             } catch (error) {
-              return document.cookie.split(";").some((part) => part.trim() === `${cookieKey}=1`);
+              // Ignore failures.
             }
           };
 
-          const setCookieConsent = () => {
+          const getConsentMode = () => {
             try {
-              localStorage.setItem(cookieKey, "1");
+              const stored = localStorage.getItem(consentKey);
+              if (stored === "all" || stored === "essential" || stored === "reject") {
+                return stored;
+              }
             } catch (error) {
-              document.cookie = `${cookieKey}=1; path=/; max-age=31536000; SameSite=Lax`;
+              // Ignore storage read failures.
             }
+
+            const cookieMode = readCookie(consentKey);
+            if (cookieMode === "all" || cookieMode === "essential" || cookieMode === "reject") {
+              return cookieMode;
+            }
+
+            const legacyAccepted = (() => {
+              try {
+                return localStorage.getItem(legacyCookieKey) === "1";
+              } catch (error) {
+                return readCookie(legacyCookieKey) === "1";
+              }
+            })();
+
+            if (legacyAccepted) {
+              return "all";
+            }
+
+            return null;
+          };
+
+          const setConsentMode = (mode) => {
+            try {
+              localStorage.setItem(consentKey, mode);
+              localStorage.removeItem(legacyCookieKey);
+            } catch (error) {
+              // Ignore storage write failures.
+            }
+            writeCookie(consentKey, mode);
+            writeCookie(legacyCookieKey, mode === "all" ? "1" : "0");
+
+            if (mode !== "all") {
+              clearLanguagePreference();
+            }
+          };
+
+          const canPersistPreferences = () => getConsentMode() === "all";
           };
 
           const showCookieBanner = () => {
@@ -1885,15 +2004,27 @@
             }, 220);
           };
 
-          const consentGiven = hasCookieConsent();
-          if (!consentGiven) {
+          const consentMode = getConsentMode();
+          if (!consentMode) {
             showCookieBanner();
           }
 
           acceptCookiesButton.addEventListener("click", () => {
-            setCookieConsent();
+            setConsentMode("all");
             hideCookieBanner();
           });
+
+          essentialCookiesButton.addEventListener("click", () => {
+            setConsentMode("essential");
+            hideCookieBanner();
+          });
+
+          rejectCookiesButton.addEventListener("click", () => {
+            setConsentMode("reject");
+            hideCookieBanner();
+          });
+
+          window.__canPersistSitePreferences = canPersistPreferences;
         }
 
         const storageKey = "siteLang";
@@ -2263,10 +2394,16 @@
             }
           }
 
-          try {
-            localStorage.setItem(storageKey, lang);
-          } catch (error) {
-            // Ignore storage write failures and still apply the selected language.
+          const canPersistSitePreferences = typeof window.__canPersistSitePreferences === "function"
+            ? window.__canPersistSitePreferences()
+            : false;
+
+          if (canPersistSitePreferences) {
+            try {
+              localStorage.setItem(storageKey, lang);
+            } catch (error) {
+              // Ignore storage write failures and still apply the selected language.
+            }
           }
 
           await applyLanguage(lang);
@@ -2284,10 +2421,16 @@
       }
 
       let savedLang = null;
-      try {
-        savedLang = localStorage.getItem(storageKey);
-      } catch (error) {
-        savedLang = null;
+      const canPersistSitePreferences = typeof window.__canPersistSitePreferences === "function"
+        ? window.__canPersistSitePreferences()
+        : false;
+
+      if (canPersistSitePreferences) {
+        try {
+          savedLang = localStorage.getItem(storageKey);
+        } catch (error) {
+          savedLang = null;
+        }
       }
 
       let initialLang = fallbackLang;
