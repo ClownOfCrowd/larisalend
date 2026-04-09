@@ -510,7 +510,7 @@
     <h2>Solicitar información o concertar visita</h2>
     <p>Si desea más detalles o coordinar una visita, deje sus datos de contacto.</p>
     <p>Atención personalizada y coordinación directa de visita.</p>
-    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/info@inmolarisa.com" method="POST">
+    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/anikanov.gleb@gmail.com" method="POST">
       <input type="hidden" name="_subject" value="Nueva solicitud desde riudecanyesvilla.com">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
@@ -1751,7 +1751,10 @@
       }
 
       const submitButton = contactForm.querySelector('button[type="submit"]');
-      const endpoint = "https://formsubmit.co/ajax/info@inmolarisa.com";
+      const actionUrl = contactForm.getAttribute("action") || "";
+      const actionMatch = actionUrl.match(/formsubmit\.co\/(.+)$/i);
+      const targetEmail = (actionMatch && actionMatch[1] ? actionMatch[1] : "anikanov.gleb@gmail.com").replace(/^ajax\//i, "");
+      const endpoint = `https://formsubmit.co/ajax/${targetEmail}`;
 
       const getMessages = () => {
         const lang = (document.documentElement.lang || "es").toLowerCase();
