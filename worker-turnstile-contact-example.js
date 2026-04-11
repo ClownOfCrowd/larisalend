@@ -74,7 +74,7 @@ export default {
     }
 
     const targetEmail = String(env.FORM_TARGET_EMAIL || "info@inmolarisa.com").trim();
-    const forwardUrl = `https://formsubmit.co/ajax/${targetEmail}`;
+    const forwardUrl = `https://formsubmit.co/${targetEmail}`;
 
     const lead = {
       nombre: cleanName,
@@ -86,24 +86,24 @@ export default {
       lang: String(body.lang || "").trim() || "es"
     };
 
-    const forwardPayload = {
-      nombre: lead.nombre,
-      email: lead.email,
-      telefono: lead.telefono,
-      horario: lead.horario,
-      message: lead.message,
-      site: lead.source,
-      lang: lead.lang,
-      _subject: "Nueva solicitud desde riudecanyesvilla.com (Worker)",
-      _template: "table",
-      _captcha: "false"
-    };
+    const forwardPayload = new URLSearchParams();
+    forwardPayload.set("nombre", lead.nombre);
+    forwardPayload.set("email", lead.email);
+    forwardPayload.set("telefono", lead.telefono);
+    forwardPayload.set("horario", lead.horario);
+    forwardPayload.set("message", lead.message);
+    forwardPayload.set("site", lead.source);
+    forwardPayload.set("lang", lead.lang);
+    forwardPayload.set("_subject", "Nueva solicitud desde riudecanyesvilla.com (Worker)");
+    forwardPayload.set("_template", "table");
+    forwardPayload.set("_captcha", "false");
+    forwardPayload.set("_next", "https://www.riudecanyesvilla.com/");
 
     const forwardResp = await fetch(forwardUrl, {
       method: "POST",
-      body: JSON.stringify(forwardPayload),
+      body: forwardPayload.toString(),
       headers: {
-        "content-type": "application/json",
+        "content-type": "application/x-www-form-urlencoded",
         Accept: "application/json"
       }
     });
