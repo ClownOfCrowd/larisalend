@@ -1779,6 +1779,7 @@
       const customEndpoint = (contactForm.dataset.submitEndpoint || "").trim();
       const actionMatch = actionUrl.match(/formsubmit\.co\/(.+)$/i);
       const targetEmail = (actionMatch && actionMatch[1] ? actionMatch[1] : "info@inmolarisa.com").replace(/^ajax\//i, "");
+      const fallbackEndpoint = `https://formsubmit.co/ajax/${targetEmail}`;
       const endpoint = customEndpoint || `https://formsubmit.co/ajax/${targetEmail}`;
       const useCustomEndpoint = Boolean(customEndpoint);
       const rateLimitKey = "contactLastSubmissionAt";
@@ -1864,6 +1865,22 @@
         statusNode.textContent = message;
         statusNode.classList.toggle("is-error", isError);
         statusNode.classList.toggle("is-success", !isError);
+      };
+
+      const sendViaFormSubmitFallback = async () => {
+        const fallbackData = new FormData(contactForm);
+        fallbackData.set("_subject", "Nueva solicitud desde riudecanyesvilla.com");
+        fallbackData.set("site", window.location.hostname || "riudecanyesvilla.com");
+
+        const fallbackResponse = await fetch(fallbackEndpoint, {
+          method: "POST",
+          body: fallbackData,
+          headers: {
+            Accept: "application/json"
+          }
+        });
+
+        return fallbackResponse.ok;
       };
 
       contactForm.addEventListener("submit", async (event) => {
@@ -1968,6 +1985,15 @@
               return;
             }
             if (apiError === "forwarding_failed") {
+              const delivered = await sendViaFormSubmitFallback();
+              if (delivered) {
+                contactForm.reset();
+                setLastSubmissionAt(Date.now());
+                contactForm.dataset.startedAt = String(Date.now());
+                showStatus(messages.success, false);
+                return;
+              }
+
               showStatus(messages.forwarding, true);
               return;
             }
