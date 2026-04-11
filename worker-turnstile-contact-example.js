@@ -74,7 +74,8 @@ export default {
     }
 
     const targetEmail = String(env.FORM_TARGET_EMAIL || "info@inmolarisa.com").trim();
-    const forwardUrl = `https://formsubmit.co/${targetEmail}`;
+    const classicForwardUrl = `https://formsubmit.co/${targetEmail}`;
+    const ajaxForwardUrl = `https://formsubmit.co/ajax/${targetEmail}`;
 
     const lead = {
       nombre: cleanName,
@@ -99,7 +100,7 @@ export default {
     forwardPayload.set("_captcha", "false");
     forwardPayload.set("_next", "https://www.riudecanyesvilla.com/");
 
-    const forwardResp = await fetch(forwardUrl, {
+    let forwardResp = await fetch(classicForwardUrl, {
       method: "POST",
       body: forwardPayload.toString(),
       headers: {
@@ -109,8 +110,40 @@ export default {
     });
 
     if (!forwardResp.ok) {
-      const upstreamBody = await safeText(forwardResp);
-      return json({ ok: false, error: "forwarding_failed", status: forwardResp.status, upstream: upstreamBody }, 502, request);
+      const fallbackResp = await fetch(ajaxForwardUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          nombre: lead.nombre,
+          email: lead.email,
+          telefono: lead.telefono,
+          horario: lead.horario,
+          message: lead.message,
+          site: lead.source,
+          lang: lead.lang,
+          _subject: "Nueva solicitud desde riudecanyesvilla.com (Worker)",
+          _template: "table",
+          _captcha: "false"
+        }),
+        headers: {
+          "content-type": "application/json",
+          Accept: "application/json"
+        }
+      });
+
+      if (!fallbackResp.ok) {
+        const upstreamBodyPrimary = await safeText(forwardResp);
+        const upstreamBodyFallback = await safeText(fallbackResp);
+        return json({
+          ok: false,
+          error: "forwarding_failed",
+          status: fallbackResp.status,
+          upstreamPrimaryStatus: forwardResp.status,
+          upstreamPrimary: upstreamBodyPrimary,
+          upstreamFallback: upstreamBodyFallback
+        }, 502, request);
+      }
+
+      forwardResp = fallbackResp;
     }
 
     return json({ ok: true }, 200, request);
