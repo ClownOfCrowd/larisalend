@@ -1803,7 +1803,9 @@
             error: "Could not send right now. Please try again in a few minutes.",
             cooldown: "Please wait a minute before sending another request.",
             bot: "Request could not be validated. Please try again.",
-            challenge: "Please complete the security challenge."
+            challenge: "Please complete the security challenge.",
+            forwarding: "Delivery is temporarily unavailable. Please try again in a minute.",
+            config: "Security configuration issue detected. Please try again shortly."
           };
         }
         if (lang.startsWith("ru")) {
@@ -1814,7 +1816,9 @@
             error: "Сейчас не удалось отправить заявку. Повторите попытку чуть позже.",
             cooldown: "Пожалуйста, подождите минуту перед повторной отправкой.",
             bot: "Не удалось подтвердить корректность запроса. Повторите попытку.",
-            challenge: "Пожалуйста, пройдите проверку безопасности."
+            challenge: "Пожалуйста, пройдите проверку безопасности.",
+            forwarding: "Временная ошибка доставки. Повторите попытку через минуту.",
+            config: "Обнаружена ошибка конфигурации безопасности. Повторите позже."
           };
         }
         return {
@@ -1824,7 +1828,9 @@
           error: "No fue posible enviar ahora. Inténtelo de nuevo en unos minutos.",
           cooldown: "Espere un minuto antes de enviar otra solicitud.",
           bot: "No se pudo validar la solicitud. Inténtelo de nuevo.",
-          challenge: "Complete el reto de seguridad antes de enviar."
+          challenge: "Complete el reto de seguridad antes de enviar.",
+          forwarding: "La entrega está temporalmente no disponible. Inténtelo en un minuto.",
+          config: "Hay un problema temporal de configuración de seguridad. Inténtelo más tarde."
         };
       };
 
@@ -1945,6 +1951,27 @@
           }
 
           if (!response.ok) {
+            let responseJson = null;
+            try {
+              responseJson = await response.json();
+            } catch (parseError) {
+              // Ignore body parse failures.
+            }
+
+            const apiError = String(responseJson?.error || "").toLowerCase();
+            if (apiError === "turnstile_failed") {
+              showStatus(messages.challenge, true);
+              return;
+            }
+            if (apiError === "missing_turnstile_secret") {
+              showStatus(messages.config, true);
+              return;
+            }
+            if (apiError === "forwarding_failed") {
+              showStatus(messages.forwarding, true);
+              return;
+            }
+
             throw new Error(`Request failed with ${response.status}`);
           }
 
