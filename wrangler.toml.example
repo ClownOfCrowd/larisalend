@@ -1,0 +1,10 @@
+name = "riudecanyes-contact"
+main = "worker-turnstile-contact-example.js"
+compatibility_date = "2026-04-11"
+
+[observability]
+enabled = true
+
+[[routes]]
+pattern = "www.riudecanyesvilla.com/api/contact"
+zone_name = "riudecanyesvilla.com"

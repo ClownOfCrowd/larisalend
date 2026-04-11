@@ -517,7 +517,7 @@
     <h2>Solicitar información o concertar visita</h2>
     <p>Si desea más detalles o coordinar una visita, deje sus datos de contacto.</p>
     <p>Atención personalizada y coordinación directa de visita.</p>
-    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/info@inmolarisa.com" method="POST">
+    <form id="contact-form" class="reveal parallax-content" action="https://formsubmit.co/info@inmolarisa.com" method="POST" data-submit-endpoint="">
       <input type="hidden" name="_subject" value="Nueva solicitud desde riudecanyesvilla.com">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
@@ -1776,9 +1776,11 @@
 
       const submitButton = contactForm.querySelector('button[type="submit"]');
       const actionUrl = contactForm.getAttribute("action") || "";
+      const customEndpoint = (contactForm.dataset.submitEndpoint || "").trim();
       const actionMatch = actionUrl.match(/formsubmit\.co\/(.+)$/i);
       const targetEmail = (actionMatch && actionMatch[1] ? actionMatch[1] : "info@inmolarisa.com").replace(/^ajax\//i, "");
-      const endpoint = `https://formsubmit.co/ajax/${targetEmail}`;
+      const endpoint = customEndpoint || `https://formsubmit.co/ajax/${targetEmail}`;
+      const useCustomEndpoint = Boolean(customEndpoint);
       const rateLimitKey = "contactLastSubmissionAt";
       const minFillTimeMs = 3500;
       const cooldownMs = 60000;
@@ -1905,17 +1907,42 @@
         showStatus(messages.sending, false);
 
         try {
-          const formData = new FormData(contactForm);
-          formData.set("_subject", "Nueva solicitud desde riudecanyesvilla.com");
-          formData.set("site", window.location.hostname || "riudecanyesvilla.com");
+          let response;
 
-          const response = await fetch(endpoint, {
-            method: "POST",
-            body: formData,
-            headers: {
-              Accept: "application/json"
-            }
-          });
+          if (useCustomEndpoint) {
+            const payload = {
+              nombre: (contactForm.querySelector('input[name="nombre"]')?.value || "").trim(),
+              telefono: (contactForm.querySelector('input[name="telefono"]')?.value || "").trim(),
+              horario: (contactForm.querySelector('select[name="horario"]')?.value || "").trim(),
+              email: (contactForm.querySelector('input[name="email"]')?.value || "").trim(),
+              message: (contactForm.querySelector('textarea[name="message"]')?.value || "").trim(),
+              honeypot: (contactForm.querySelector('input[name="company"]')?.value || "").trim(),
+              turnstileToken: (contactForm.querySelector('input[name="cf-turnstile-response"]')?.value || "").trim(),
+              site: window.location.hostname || "riudecanyesvilla.com",
+              lang: (document.documentElement.lang || "es").toLowerCase()
+            };
+
+            response = await fetch(endpoint, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+          } else {
+            const formData = new FormData(contactForm);
+            formData.set("_subject", "Nueva solicitud desde riudecanyesvilla.com");
+            formData.set("site", window.location.hostname || "riudecanyesvilla.com");
+
+            response = await fetch(endpoint, {
+              method: "POST",
+              body: formData,
+              headers: {
+                Accept: "application/json"
+              }
+            });
+          }
 
           if (!response.ok) {
             throw new Error(`Request failed with ${response.status}`);

@@ -22,6 +22,21 @@ Implemented in code:
   - referrer policy
   - permissions policy
 - Cloudflare Turnstile is integrated on the client side (widget + token check).
+- Contact form supports optional custom endpoint through `data-submit-endpoint` on the form.
+- Worker deployment templates are prepared:
+  - `worker-turnstile-contact-example.js`
+  - `wrangler.toml.example`
+  - `.dev.vars.example`
+
+## Code-Only Actions Completed Now
+These are implemented and can be used immediately in code, without Cloudflare dashboard changes yet:
+1. Optional endpoint switch in `index.html`:
+  - keep empty to use FormSubmit fallback
+  - set to `/api/contact` when Worker route is live
+2. Worker template now validates Turnstile server-side and forwards accepted leads.
+3. Local secrets safety:
+  - `.dev.vars` is ignored via `.gitignore`
+  - example file provided for safe setup.
 
 ## Important Architecture Note
 The form currently submits to `formsubmit.co`.
