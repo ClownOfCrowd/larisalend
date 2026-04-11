@@ -20,8 +20,10 @@
   <meta property="og:url" content="https://www.riudecanyesvilla.com/">
   <meta property="og:site_name" content="Riudecanyes Villa">
   <meta property="og:locale" content="es_ES">
+  <meta property="og:locale:alternate" content="en_GB">
+  <meta property="og:locale:alternate" content="ru_RU">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' https: blob:; connect-src 'self' https://formsubmit.co; frame-src https://www.google.com https://www.google.com/maps https://maps.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' https: blob:; connect-src 'self' https://formsubmit.co https://challenges.cloudflare.com; frame-src https://www.google.com https://www.google.com/maps https://maps.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()">
 
   <meta name="twitter:card" content="summary_large_image">
@@ -31,9 +33,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="boot-loading">
 
@@ -538,6 +542,16 @@
         <option value="19:00-20:00">19:00 - 20:00</option>
       </select>
       <input type="email" name="email" placeholder="Datos de contacto (correo, mensajero)" required maxlength="120" autocomplete="email">
+      <div class="turnstile-wrap">
+        <div
+          id="turnstile-widget"
+          class="cf-turnstile"
+          data-sitekey="YOUR_TURNSTILE_SITE_KEY"
+          data-theme="light"
+          data-size="normal"
+          data-language="es"
+        ></div>
+      </div>
       <button type="submit">Enviar</button>
       <p class="contact-form-status" id="contact-form-status" role="status" aria-live="polite" hidden></p>
     </form>
@@ -1768,7 +1782,14 @@
       const rateLimitKey = "contactLastSubmissionAt";
       const minFillTimeMs = 3500;
       const cooldownMs = 60000;
+      const turnstileNode = contactForm.querySelector(".cf-turnstile");
+      const turnstileSiteKey = (turnstileNode?.dataset?.sitekey || "").trim();
+      const turnstileEnabled = Boolean(turnstileSiteKey && !/^YOUR_/i.test(turnstileSiteKey));
       contactForm.dataset.startedAt = String(Date.now());
+
+      if (turnstileNode && !turnstileEnabled) {
+        turnstileNode.parentElement?.setAttribute("hidden", "hidden");
+      }
 
       const getMessages = () => {
         const lang = (document.documentElement.lang || "es").toLowerCase();
@@ -1779,7 +1800,8 @@
             invalid: "Please provide a valid name and email.",
             error: "Could not send right now. Please try again in a few minutes.",
             cooldown: "Please wait a minute before sending another request.",
-            bot: "Request could not be validated. Please try again."
+            bot: "Request could not be validated. Please try again.",
+            challenge: "Please complete the security challenge."
           };
         }
         if (lang.startsWith("ru")) {
@@ -1789,7 +1811,8 @@
             invalid: "Пожалуйста, укажите корректные имя и email.",
             error: "Сейчас не удалось отправить заявку. Повторите попытку чуть позже.",
             cooldown: "Пожалуйста, подождите минуту перед повторной отправкой.",
-            bot: "Не удалось подтвердить корректность запроса. Повторите попытку."
+            bot: "Не удалось подтвердить корректность запроса. Повторите попытку.",
+            challenge: "Пожалуйста, пройдите проверку безопасности."
           };
         }
         return {
@@ -1798,7 +1821,8 @@
           invalid: "Por favor, indique un nombre y email válidos.",
           error: "No fue posible enviar ahora. Inténtelo de nuevo en unos minutos.",
           cooldown: "Espere un minuto antes de enviar otra solicitud.",
-          bot: "No se pudo validar la solicitud. Inténtelo de nuevo."
+          bot: "No se pudo validar la solicitud. Inténtelo de nuevo.",
+          challenge: "Complete el reto de seguridad antes de enviar."
         };
       };
 
@@ -1841,6 +1865,7 @@
         const nameInput = contactForm.querySelector('input[name="nombre"]');
         const emailInput = contactForm.querySelector('input[name="email"]');
         const honeypotInput = contactForm.querySelector('input[name="company"]');
+        const turnstileTokenInput = contactForm.querySelector('input[name="cf-turnstile-response"]');
 
         const name = (nameInput?.value || "").trim();
         const email = (emailInput?.value || "").trim();
@@ -1859,6 +1884,14 @@
         if (honeypot.length > 0 || !startedAt || elapsed < minFillTimeMs) {
           showStatus(messages.bot, true);
           return;
+        }
+
+        if (turnstileEnabled) {
+          const turnstileToken = (turnstileTokenInput?.value || "").trim();
+          if (!turnstileToken) {
+            showStatus(messages.challenge, true);
+            return;
+          }
         }
 
         if (name.length < 2 || !emailOk) {
@@ -1897,6 +1930,13 @@
         } finally {
           if (submitButton) {
             submitButton.disabled = false;
+          }
+          if (turnstileEnabled && window.turnstile && typeof window.turnstile.reset === "function" && turnstileNode?.id) {
+            try {
+              window.turnstile.reset(turnstileNode.id);
+            } catch (error) {
+              // Ignore widget reset failures.
+            }
           }
         }
       });
@@ -2465,8 +2505,11 @@
   {
     "@context": "https://schema.org",
     "@type": "Residence",
+    "url": "https://www.riudecanyesvilla.com/",
     "name": "Casa en Riudecanyes",
     "description": "Vivienda de autor con vistas al mar en Tarragona",
+    "image": "https://www.riudecanyesvilla.com/media/aerea-1.jpg",
+    "inLanguage": ["es", "en", "ru"],
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Riudecanyes",
@@ -2478,7 +2521,14 @@
       "value": 316,
       "unitCode": "MTK"
     },
-    "numberOfRooms": 9
+    "numberOfRooms": 9,
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.riudecanyesvilla.com/",
+      "priceCurrency": "EUR",
+      "price": "1280000",
+      "availability": "https://schema.org/InStock"
+    }
   }
   </script>
 

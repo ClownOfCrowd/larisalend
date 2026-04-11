@@ -2052,6 +2052,17 @@ ul {
   overflow: hidden;
 }
 
+.turnstile-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  margin: 2px 0 0;
+}
+
+.turnstile-wrap[hidden] {
+  display: none !important;
+}
+
 
 .contact-form-status {
   grid-column: 1 / -1;
