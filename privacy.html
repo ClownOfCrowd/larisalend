@@ -40,6 +40,42 @@
       color: #1f4b75;
     }
 
+    .lang-switch {
+      display: inline-flex;
+      gap: 6px;
+      margin-bottom: 18px;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .lang-btn {
+      border: 0;
+      border-radius: 999px;
+      min-width: 46px;
+      height: 30px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      background: transparent;
+      color: #1a1a1a;
+    }
+
+    .lang-btn.is-active {
+      background: #1f4b75;
+      color: #ffffff;
+    }
+
+    [data-lang-content] {
+      display: none;
+    }
+
+    [data-lang-content].is-active {
+      display: block;
+    }
+
     .back-link {
       display: inline-block;
       margin-top: 14px;
@@ -49,65 +85,282 @@
 </head>
 <body>
   <main>
-    <h1>Política de privacidad y cookies</h1>
-    <p>Última actualización: 2026-04-11.</p>
-    <p>Este documento regula el tratamiento de datos personales y el uso de cookies en este sitio web inmobiliario, de conformidad con el Reglamento (UE) 2016/679 (RGPD), la Ley Orgánica 3/2018 (LOPDGDD) y la normativa aplicable en materia de servicios de la sociedad de la información.</p>
+    <div class="lang-switch" role="group" aria-label="Selector de idioma">
+      <button class="lang-btn" type="button" data-lang="es">ES</button>
+      <button class="lang-btn" type="button" data-lang="en">EN</button>
+      <button class="lang-btn" type="button" data-lang="ru">RU</button>
+    </div>
 
-    <h2>1. Responsable del tratamiento</h2>
-    <p>Responsable: Inmobiliaria Larisa.</p>
-    <p>Ámbito de actividad: servicios inmobiliarios en Costa Daurada.</p>
-    <p>Correo de contacto para privacidad: info@inmolarisa.com.</p>
+    <section data-lang-content="es" class="is-active">
+      <h1>Política de privacidad y cookies</h1>
+      <p>Última actualización: 2026-04-11.</p>
+      <p>Este documento regula el tratamiento de datos personales y el uso de cookies en este sitio web inmobiliario, de conformidad con el Reglamento (UE) 2016/679 (RGPD), la Ley Orgánica 3/2018 (LOPDGDD) y la normativa aplicable en materia de servicios de la sociedad de la información.</p>
 
-    <h2>2. Datos personales tratados</h2>
-    <p>Se tratan exclusivamente los datos facilitados por el usuario a través del formulario de contacto: nombre, teléfono y correo electrónico u otro dato de contacto que incluya voluntariamente.</p>
-    <p>Asimismo, para prevenir abuso automatizado del formulario, pueden tratarse datos técnicos mínimos asociados a mecanismos anti-bot (por ejemplo, token de verificación y metadatos técnicos de seguridad).</p>
+      <h2>1. Responsable del tratamiento</h2>
+      <p>Responsable: Inmobiliaria Larisa.</p>
+      <p>Ámbito de actividad: servicios inmobiliarios en Costa Daurada.</p>
+      <p>Correo de contacto para privacidad: info@inmolarisa.com.</p>
 
-    <h2>3. Finalidades del tratamiento</h2>
-    <p>Los datos se tratan para:</p>
-    <p>1. Responder consultas sobre inmuebles.</p>
-    <p>2. Gestionar solicitudes de información y visitas.</p>
-    <p>3. Mantener comunicaciones relacionadas con la petición realizada por el interesado.</p>
+      <h2>2. Datos personales tratados</h2>
+      <p>Se tratan exclusivamente los datos facilitados por el usuario a través del formulario de contacto: nombre, teléfono y correo electrónico u otro dato de contacto que incluya voluntariamente.</p>
+      <p>Asimismo, para prevenir abuso automatizado del formulario, pueden tratarse datos técnicos mínimos asociados a mecanismos anti-bot (por ejemplo, token de verificación y metadatos técnicos de seguridad).</p>
 
-    <h2>4. Bases jurídicas</h2>
-    <p>Las bases legales del tratamiento son:</p>
-    <p>1. Consentimiento del interesado (art. 6.1.a RGPD), al remitir el formulario.</p>
-    <p>2. Aplicación de medidas precontractuales solicitadas por el interesado (art. 6.1.b RGPD), cuando la consulta esté vinculada a la compraventa, alquiler o visita de un inmueble.</p>
-    <p>3. Interés legítimo en garantizar la seguridad del sitio y prevenir fraude o abuso (art. 6.1.f RGPD).</p>
+      <h2>3. Finalidades del tratamiento</h2>
+      <p>Los datos se tratan para:</p>
+      <p>1. Responder consultas sobre inmuebles.</p>
+      <p>2. Gestionar solicitudes de información y visitas.</p>
+      <p>3. Mantener comunicaciones relacionadas con la petición realizada por el interesado.</p>
 
-    <h2>5. Destinatarios y encargados</h2>
-    <p>Los datos no se ceden a terceros salvo obligación legal.</p>
-    <p>Para la gestión técnica del envío del formulario se utiliza FormSubmit como proveedor de pasarela de correo (encargado del tratamiento). El uso de dicho servicio implica transmisión de datos al proveedor conforme a sus propias condiciones y política de privacidad.</p>
+      <h2>4. Bases jurídicas</h2>
+      <p>Las bases legales del tratamiento son:</p>
+      <p>1. Consentimiento del interesado (art. 6.1.a RGPD), al remitir el formulario.</p>
+      <p>2. Aplicación de medidas precontractuales solicitadas por el interesado (art. 6.1.b RGPD), cuando la consulta esté vinculada a la compraventa, alquiler o visita de un inmueble.</p>
+      <p>3. Interés legítimo en garantizar la seguridad del sitio y prevenir fraude o abuso (art. 6.1.f RGPD).</p>
 
-    <h2>6. Transferencias internacionales</h2>
-    <p>Cuando el proveedor técnico procese datos fuera del Espacio Económico Europeo, dichas transferencias se realizarán conforme a mecanismos válidos del RGPD (por ejemplo, decisiones de adecuación o cláusulas contractuales tipo, según proceda).</p>
+      <h2>5. Destinatarios y encargados</h2>
+      <p>Los datos no se ceden a terceros salvo obligación legal.</p>
+      <p>Para la gestión técnica del envío del formulario se utiliza FormSubmit como proveedor de pasarela de correo (encargado del tratamiento). El uso de dicho servicio implica transmisión de datos al proveedor conforme a sus propias condiciones y política de privacidad.</p>
 
-    <h2>7. Plazos de conservación</h2>
-    <p>Los datos se conservan durante el tiempo necesario para gestionar la solicitud y, posteriormente, durante los plazos exigidos por obligaciones legales o para la defensa de posibles reclamaciones.</p>
+      <h2>6. Transferencias internacionales</h2>
+      <p>Cuando el proveedor técnico procese datos fuera del Espacio Económico Europeo, dichas transferencias se realizarán conforme a mecanismos válidos del RGPD (por ejemplo, decisiones de adecuación o cláusulas contractuales tipo, según proceda).</p>
 
-    <h2>8. Derechos de los interesados</h2>
-    <p>Puede ejercer los derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad mediante solicitud dirigida a info@inmolarisa.com, indicando su identidad y el derecho que desea ejercer.</p>
-    <p>Asimismo, cuando el tratamiento se base en el consentimiento, podrá retirarlo en cualquier momento sin efectos retroactivos sobre tratamientos ya realizados.</p>
-    <p>Si considera que sus derechos no han sido atendidos adecuadamente, puede presentar reclamación ante la autoridad de control competente (en España, Agencia Española de Protección de Datos: www.aepd.es), sin perjuicio de la autoridad del país de residencia dentro de la UE.</p>
+      <h2>7. Plazos de conservación</h2>
+      <p>Los datos se conservan durante el tiempo necesario para gestionar la solicitud y, posteriormente, durante los plazos exigidos por obligaciones legales o para la defensa de posibles reclamaciones.</p>
 
-    <h2>9. Política de cookies</h2>
-    <p>El sitio permite elegir entre tres modos de consentimiento:</p>
-    <p>1. Aceptar todo.</p>
-    <p>2. Solo cookies necesarias.</p>
-    <p>3. Rechazar cookies opcionales.</p>
-    <p>Cookies necesarias: imprescindibles para funciones técnicas básicas del sitio y para guardar la preferencia de consentimiento.</p>
-    <p>Cookies opcionales: destinadas a funcionalidades no estrictamente necesarias. En este momento, el sitio minimiza su uso y prioriza cookies necesarias.</p>
-    <p>Puede modificar o revocar su elección eliminando las cookies del navegador y volviendo a cargar el sitio.</p>
+      <h2>8. Derechos de los interesados</h2>
+      <p>Puede ejercer los derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad mediante solicitud dirigida a info@inmolarisa.com, indicando su identidad y el derecho que desea ejercer.</p>
+      <p>Asimismo, cuando el tratamiento se base en el consentimiento, podrá retirarlo en cualquier momento sin efectos retroactivos sobre tratamientos ya realizados.</p>
+      <p>Si considera que sus derechos no han sido atendidos adecuadamente, puede presentar reclamación ante la autoridad de control competente (en España, Agencia Española de Protección de Datos: www.aepd.es), sin perjuicio de la autoridad del país de residencia dentro de la UE.</p>
 
-    <h2>10. Seguridad</h2>
-    <p>Se aplican medidas técnicas y organizativas razonables para mitigar accesos no autorizados, abuso del formulario y alteraciones indebidas de la información. No obstante, ningún sistema conectado a internet puede garantizar seguridad absoluta.</p>
+      <h2>9. Política de cookies</h2>
+      <p>El sitio permite elegir entre tres modos de consentimiento:</p>
+      <p>1. Aceptar todo.</p>
+      <p>2. Solo cookies necesarias.</p>
+      <p>3. Rechazar cookies opcionales.</p>
+      <p>Cookies necesarias: imprescindibles para funciones técnicas básicas del sitio y para guardar la preferencia de consentimiento.</p>
+      <p>Cookies opcionales: destinadas a funcionalidades no estrictamente necesarias. En este momento, el sitio minimiza su uso y prioriza cookies necesarias.</p>
+      <p>Puede modificar o revocar su elección eliminando las cookies del navegador y volviendo a cargar el sitio.</p>
 
-    <h2>11. Menores de edad</h2>
-    <p>Este sitio no está dirigido a menores de 14 años. Si se detecta que se han recibido datos de un menor sin autorización válida, se adoptarán medidas para su supresión.</p>
+      <h2>10. Seguridad</h2>
+      <p>Se aplican medidas técnicas y organizativas razonables para mitigar accesos no autorizados, abuso del formulario y alteraciones indebidas de la información. No obstante, ningún sistema conectado a internet puede garantizar seguridad absoluta.</p>
 
-    <h2>12. Cambios en esta política</h2>
-    <p>Esta política podrá actualizarse para adaptarse a cambios legales, técnicos o de funcionamiento del sitio. Se recomienda revisarla periódicamente.</p>
+      <h2>11. Menores de edad</h2>
+      <p>Este sitio no está dirigido a menores de 14 años. Si se detecta que se han recibido datos de un menor sin autorización válida, se adoptarán medidas para su supresión.</p>
 
-    <p><a class="back-link" href="index.html">Volver al sitio</a></p>
+      <h2>12. Cambios en esta política</h2>
+      <p>Esta política podrá actualizarse para adaptarse a cambios legales, técnicos o de funcionamiento del sitio. Se recomienda revisarla periódicamente.</p>
+    </section>
+
+    <section data-lang-content="en">
+      <h1>Privacy and cookie policy</h1>
+      <p>Last update: 2026-04-11.</p>
+      <p>This document governs the processing of personal data and the use of cookies on this real estate website, in accordance with Regulation (EU) 2016/679 (GDPR), Spanish Organic Law 3/2018 and applicable information society regulations.</p>
+
+      <h2>1. Data controller</h2>
+      <p>Controller: Inmobiliaria Larisa.</p>
+      <p>Business scope: real estate services in Costa Daurada.</p>
+      <p>Privacy contact email: info@inmolarisa.com.</p>
+
+      <h2>2. Personal data processed</h2>
+      <p>Only data provided by the user through the contact form is processed: name, phone number and email address, or any other contact data voluntarily included by the user.</p>
+      <p>To prevent automated abuse, minimum technical security data may also be processed (for example, verification token and technical security metadata).</p>
+
+      <h2>3. Processing purposes</h2>
+      <p>Data is processed to:</p>
+      <p>1. Reply to property inquiries.</p>
+      <p>2. Manage requests for information and visits.</p>
+      <p>3. Maintain communications related to the request made by the data subject.</p>
+
+      <h2>4. Legal basis</h2>
+      <p>The legal bases are:</p>
+      <p>1. Data subject consent (Art. 6.1.a GDPR) when submitting the form.</p>
+      <p>2. Pre-contractual measures requested by the data subject (Art. 6.1.b GDPR) when the inquiry is linked to purchase, rental or visit arrangements.</p>
+      <p>3. Legitimate interest in ensuring website security and preventing fraud or abuse (Art. 6.1.f GDPR).</p>
+
+      <h2>5. Recipients and processors</h2>
+      <p>Data is not disclosed to third parties unless legally required.</p>
+      <p>FormSubmit is used as a technical email gateway provider (data processor) for form delivery. Using this service implies data transfer under the provider terms and privacy policy.</p>
+
+      <h2>6. International transfers</h2>
+      <p>When technical providers process data outside the European Economic Area, such transfers are made using valid GDPR mechanisms (for example adequacy decisions or standard contractual clauses, where applicable).</p>
+
+      <h2>7. Retention periods</h2>
+      <p>Data is retained for the time required to manage the request and, afterwards, for the periods required by legal obligations or for the defense of potential claims.</p>
+
+      <h2>8. Data subject rights</h2>
+      <p>You may exercise your rights of access, rectification, erasure, objection, restriction and portability by sending a request to info@inmolarisa.com and indicating your identity and requested right.</p>
+      <p>Where processing is based on consent, consent may be withdrawn at any time without retroactive effects on processing already carried out.</p>
+      <p>If you believe your rights have not been properly addressed, you may file a complaint with the competent supervisory authority (in Spain, the AEPD: www.aepd.es), without prejudice to the authority in your EU country of residence.</p>
+
+      <h2>9. Cookie policy</h2>
+      <p>The site allows three consent modes:</p>
+      <p>1. Accept all.</p>
+      <p>2. Essential cookies only.</p>
+      <p>3. Reject optional cookies.</p>
+      <p>Essential cookies are required for basic technical functions and to store consent preference.</p>
+      <p>Optional cookies are for non-essential features. At this time, the website minimizes optional cookies and prioritizes essential cookies.</p>
+      <p>You may modify or revoke your choice by deleting browser cookies and reloading the website.</p>
+
+      <h2>10. Security</h2>
+      <p>Reasonable technical and organizational measures are applied to mitigate unauthorized access, form abuse and unlawful alteration of information. However, no internet-connected system can guarantee absolute security.</p>
+
+      <h2>11. Minors</h2>
+      <p>This site is not intended for children under 14 years old. If data from a minor is detected without valid authorization, deletion measures will be taken.</p>
+
+      <h2>12. Policy changes</h2>
+      <p>This policy may be updated to adapt to legal, technical or operational changes. Periodic review is recommended.</p>
+    </section>
+
+    <section data-lang-content="ru">
+      <h1>Политика конфиденциальности и cookies</h1>
+      <p>Последнее обновление: 2026-04-11.</p>
+      <p>Этот документ регулирует обработку персональных данных и использование cookies на данном сайте недвижимости в соответствии с Регламентом (ЕС) 2016/679 (GDPR), Органическим законом Испании 3/2018 и применимыми нормами для информационного общества.</p>
+
+      <h2>1. Оператор данных</h2>
+      <p>Оператор: Inmobiliaria Larisa.</p>
+      <p>Сфера деятельности: услуги недвижимости на Costa Daurada.</p>
+      <p>Email для вопросов по конфиденциальности: info@inmolarisa.com.</p>
+
+      <h2>2. Какие данные обрабатываются</h2>
+      <p>Обрабатываются только данные, которые пользователь указывает в контактной форме: имя, телефон, email или иные контактные данные, добровольно добавленные пользователем.</p>
+      <p>Для предотвращения автоматизированного злоупотребления формой также могут обрабатываться минимальные технические данные безопасности (например, токен проверки и технические метаданные безопасности).</p>
+
+      <h2>3. Цели обработки</h2>
+      <p>Данные обрабатываются для:</p>
+      <p>1. Ответа на запросы по объектам недвижимости.</p>
+      <p>2. Обработки запросов на информацию и организацию просмотров.</p>
+      <p>3. Коммуникации по обращению, отправленному пользователем.</p>
+
+      <h2>4. Правовые основания</h2>
+      <p>Правовыми основаниями являются:</p>
+      <p>1. Согласие пользователя (ст. 6.1.a GDPR) при отправке формы.</p>
+      <p>2. Преддоговорные меры по запросу пользователя (ст. 6.1.b GDPR), когда обращение связано с покупкой, арендой или просмотром объекта.</p>
+      <p>3. Законный интерес в обеспечении безопасности сайта и предотвращении мошенничества/злоупотреблений (ст. 6.1.f GDPR).</p>
+
+      <h2>5. Получатели и обработчики</h2>
+      <p>Данные не передаются третьим лицам, кроме случаев, предусмотренных законом.</p>
+      <p>Для технической доставки формы используется FormSubmit как провайдер почтового шлюза (обработчик данных). Использование сервиса предполагает передачу данных в соответствии с его условиями и политикой конфиденциальности.</p>
+
+      <h2>6. Международные передачи</h2>
+      <p>Если технический провайдер обрабатывает данные за пределами ЕЭЗ, такие передачи осуществляются по допустимым механизмам GDPR (например, решения об адекватности или стандартные договорные положения, где применимо).</p>
+
+      <h2>7. Срок хранения</h2>
+      <p>Данные хранятся столько, сколько необходимо для обработки обращения, а затем в течение сроков, требуемых законом или для защиты по возможным претензиям.</p>
+
+      <h2>8. Права субъекта данных</h2>
+      <p>Вы можете реализовать права доступа, исправления, удаления, возражения, ограничения обработки и переносимости, отправив запрос на info@inmolarisa.com и указав свою личность и требуемое право.</p>
+      <p>Если обработка основана на согласии, вы можете отозвать его в любой момент без обратной силы для уже выполненной обработки.</p>
+      <p>Если вы считаете, что ваши права нарушены, вы можете обратиться в компетентный надзорный орган (в Испании: AEPD, www.aepd.es), без ущерба для органа вашей страны проживания в ЕС.</p>
+
+      <h2>9. Политика cookies</h2>
+      <p>Сайт поддерживает три режима согласия:</p>
+      <p>1. Принять все.</p>
+      <p>2. Только обязательные cookies.</p>
+      <p>3. Отклонить необязательные cookies.</p>
+      <p>Обязательные cookies необходимы для базовых технических функций и хранения выбора согласия.</p>
+      <p>Необязательные cookies используются для дополнительных функций. Сейчас сайт минимизирует их использование и отдает приоритет обязательным cookies.</p>
+      <p>Вы можете изменить или отозвать выбор, удалив cookies в браузере и перезагрузив сайт.</p>
+
+      <h2>10. Безопасность</h2>
+      <p>Применяются разумные технические и организационные меры для снижения риска несанкционированного доступа, злоупотребления формой и неправомерного изменения информации. Однако ни одна система в интернете не может гарантировать абсолютную безопасность.</p>
+
+      <h2>11. Несовершеннолетние</h2>
+      <p>Сайт не предназначен для лиц младше 14 лет. Если будет выявлено получение данных несовершеннолетнего без действительного разрешения, будут приняты меры по удалению.</p>
+
+      <h2>12. Изменения политики</h2>
+      <p>Политика может обновляться в связи с юридическими, техническими или операционными изменениями. Рекомендуется периодически проверять эту страницу.</p>
+    </section>
+
+    <p><a class="back-link" id="back-link" href="index.html">Volver al sitio</a></p>
   </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const fallbackLang = "es";
+      const supported = new Set(["es", "en", "ru"]);
+      const langButtons = Array.from(document.querySelectorAll(".lang-btn"));
+      const sections = Array.from(document.querySelectorAll("[data-lang-content]"));
+      const backLink = document.getElementById("back-link");
+
+      const labels = {
+        es: { title: "Política de privacidad", back: "Volver al sitio" },
+        en: { title: "Privacy policy", back: "Back to site" },
+        ru: { title: "Политика конфиденциальности", back: "Вернуться на сайт" }
+      };
+
+      const getInitialLang = () => {
+        try {
+          const urlLang = new URL(window.location.href).searchParams.get("lang");
+          if (urlLang && supported.has(urlLang)) {
+            return urlLang;
+          }
+        } catch (error) {
+          // Ignore URL parse failures.
+        }
+
+        try {
+          const stored = localStorage.getItem("siteLang");
+          if (stored && supported.has(stored)) {
+            return stored;
+          }
+        } catch (error) {
+          // Ignore storage failures.
+        }
+
+        const lang = (document.documentElement.lang || fallbackLang).toLowerCase();
+        return supported.has(lang) ? lang : fallbackLang;
+      };
+
+      const applyLang = (lang) => {
+        const nextLang = supported.has(lang) ? lang : fallbackLang;
+        document.documentElement.lang = nextLang;
+
+        sections.forEach((section) => {
+          const isActive = section.getAttribute("data-lang-content") === nextLang;
+          section.classList.toggle("is-active", isActive);
+        });
+
+        langButtons.forEach((button) => {
+          const isActive = button.dataset.lang === nextLang;
+          button.classList.toggle("is-active", isActive);
+          button.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+
+        const label = labels[nextLang] || labels[fallbackLang];
+        document.title = label.title;
+
+        if (backLink) {
+          backLink.textContent = label.back;
+          backLink.setAttribute("href", nextLang === fallbackLang ? "index.html" : `index.html?lang=${nextLang}`);
+        }
+
+        try {
+          localStorage.setItem("siteLang", nextLang);
+        } catch (error) {
+          // Ignore storage failures.
+        }
+
+        try {
+          const url = new URL(window.location.href);
+          if (nextLang === fallbackLang) {
+            url.searchParams.delete("lang");
+          } else {
+            url.searchParams.set("lang", nextLang);
+          }
+          window.history.replaceState(null, "", url.toString());
+        } catch (error) {
+          // Ignore URL update failures.
+        }
+      };
+
+      langButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          applyLang(button.dataset.lang || fallbackLang);
+        });
+      });
+
+      applyLang(getInitialLang());
+    });
+  </script>
 </body>
 </html>
