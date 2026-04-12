@@ -71,11 +71,7 @@ async function minifyIndex() {
     collapseWhitespace: true,
     removeComments: true,
     minifyCSS: true,
-    minifyJS: {
-      compress: true,
-      mangle: true,
-      format: { comments: false }
-    },
+    minifyJS: false,
     removeRedundantAttributes: true,
     useShortDoctype: true,
     keepClosingSlash: true
