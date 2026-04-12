@@ -11,6 +11,8 @@
   <link rel="alternate" hreflang="es" href="https://www.riudecanyesvilla.com/?lang=es">
   <link rel="alternate" hreflang="en" href="https://www.riudecanyesvilla.com/?lang=en">
   <link rel="alternate" hreflang="ru" href="https://www.riudecanyesvilla.com/?lang=ru">
+  <link rel="alternate" hreflang="fr" href="https://www.riudecanyesvilla.com/?lang=fr">
+  <link rel="alternate" hreflang="de" href="https://www.riudecanyesvilla.com/?lang=de">
   <link rel="alternate" hreflang="x-default" href="https://www.riudecanyesvilla.com/">
 
   <meta property="og:title" content="Propiedad exclusiva en Riudecanyes · Arquitectura de autor">
@@ -22,6 +24,8 @@
   <meta property="og:locale" content="es_ES">
   <meta property="og:locale:alternate" content="en_GB">
   <meta property="og:locale:alternate" content="ru_RU">
+  <meta property="og:locale:alternate" content="fr_FR">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; media-src 'self' https: blob:; connect-src 'self' https://formsubmit.co https://challenges.cloudflare.com; frame-src https://www.google.com https://www.google.com/maps https://maps.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests">
   <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()">
@@ -68,6 +72,8 @@
       <button class="lang-btn is-active" type="button" data-lang="es" aria-pressed="true">ES</button>
       <button class="lang-btn" type="button" data-lang="en" aria-pressed="false">EN</button>
       <button class="lang-btn" type="button" data-lang="ru" aria-pressed="false">RU</button>
+      <button class="lang-btn" type="button" data-lang="fr" aria-pressed="false">FR</button>
+      <button class="lang-btn" type="button" data-lang="de" aria-pressed="false">DE</button>
     </div>
   </header>
 
@@ -720,6 +726,7 @@
       siteHeader.classList.remove('nav-open');
       navToggle.setAttribute('aria-expanded', 'false');
       navToggle.setAttribute('aria-label', getMenuLabels().open);
+      syncHeaderOffsetVar();
     };
 
     const syncMobileNavLabel = () => {
@@ -736,6 +743,7 @@
         const isOpen = siteHeader.classList.toggle('nav-open');
         navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         syncMobileNavLabel();
+        syncHeaderOffsetVar();
       });
 
       mainNav.querySelectorAll('a').forEach((link) => {
@@ -784,6 +792,18 @@
       siteHeader.classList.toggle('is-scrolled', isScrolled);
     };
 
+    const syncHeaderOffsetVar = () => {
+      const root = document.documentElement;
+      if (!root || !siteHeader) {
+        return;
+      }
+
+      const headerHeight = Math.ceil(siteHeader.getBoundingClientRect().height);
+      if (headerHeight > 0) {
+        root.style.setProperty('--header-offset', `${headerHeight}px`);
+      }
+    };
+
     let headerToggleScheduled = false;
     const requestToggleHeader = () => {
       if (headerToggleScheduled) {
@@ -800,6 +820,135 @@
     window.addEventListener('scroll', requestToggleHeader, { passive: true });
     window.addEventListener('resize', requestToggleHeader, { passive: true });
     window.addEventListener('load', toggleHeader);
+    window.addEventListener('resize', syncHeaderOffsetVar, { passive: true });
+    window.addEventListener('load', syncHeaderOffsetVar);
+    if ('ResizeObserver' in window && siteHeader) {
+      const headerResizeObserver = new ResizeObserver(() => {
+        syncHeaderOffsetVar();
+      });
+      headerResizeObserver.observe(siteHeader);
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        syncHeaderOffsetVar();
+        if (window.location.hash) {
+          scrollToAnchorHash(window.location.hash, 'auto');
+        }
+      }, { passive: true });
+    }
+    syncHeaderOffsetVar();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const internalAnchorSelector = 'a[href^="#"]';
+    const excludedAnchorIds = new Set(['telegram-cta', 'whatsapp-cta']);
+
+    const resolveAnchorTarget = (hash) => {
+      if (!hash || hash === '#') {
+        return null;
+      }
+
+      try {
+        return document.querySelector(hash);
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const getAnchorOffset = () => {
+      const rootStyles = window.getComputedStyle(document.documentElement);
+      const cssOffset = Number.parseFloat(rootStyles.getPropertyValue('--header-offset')) || 0;
+      const headerHeight = siteHeader ? Math.ceil(siteHeader.getBoundingClientRect().height) : 0;
+      return Math.max(cssOffset, headerHeight, 0);
+    };
+
+    const scrollToAnchorHash = (hash, behavior = 'smooth') => {
+      const target = resolveAnchorTarget(hash);
+      if (!target) {
+        return false;
+      }
+
+      const getTop = () => {
+        const anchorTop = target.getBoundingClientRect().top + window.pageYOffset;
+        return Math.max(0, anchorTop - getAnchorOffset());
+      };
+
+      window.scrollTo({
+        top: getTop(),
+        behavior: prefersReducedMotion ? 'auto' : behavior
+      });
+
+      const correctPosition = () => {
+        const delta = target.getBoundingClientRect().top - getAnchorOffset();
+        if (Math.abs(delta) <= 1) {
+          return;
+        }
+
+        window.scrollBy({
+          top: delta,
+          behavior: 'auto'
+        });
+      };
+
+      window.requestAnimationFrame(correctPosition);
+      window.setTimeout(correctPosition, 120);
+      window.setTimeout(correctPosition, 320);
+      window.setTimeout(correctPosition, 650);
+      window.setTimeout(correctPosition, 1000);
+
+      return true;
+    };
+
+    document.querySelectorAll(internalAnchorSelector).forEach((link) => {
+      if (!(link instanceof HTMLAnchorElement)) {
+        return;
+      }
+
+      if (excludedAnchorIds.has(link.id)) {
+        return;
+      }
+
+      const { hash } = link;
+      if (!hash || hash === '#') {
+        return;
+      }
+
+      if (!resolveAnchorTarget(hash)) {
+        return;
+      }
+
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (window.innerWidth <= 767) {
+          closeMobileNav();
+        }
+
+        const shouldDefer = window.innerWidth <= 767;
+        if (shouldDefer) {
+          window.setTimeout(() => {
+            syncHeaderOffsetVar();
+            scrollToAnchorHash(hash, 'smooth');
+          }, 80);
+        } else {
+          syncHeaderOffsetVar();
+          scrollToAnchorHash(hash, 'smooth');
+        }
+
+        if (window.location.hash !== hash) {
+          history.pushState(null, '', hash);
+        }
+      });
+    });
+
+    window.addEventListener('hashchange', () => {
+      scrollToAnchorHash(window.location.hash, 'auto');
+    });
+
+    window.addEventListener('load', () => {
+      if (window.location.hash) {
+        scrollToAnchorHash(window.location.hash, 'auto');
+      }
+    });
 
     const arquitecturaContent = document.querySelector('.arquitectura-content');
     const historiaContent = document.querySelector('.historia-content');
@@ -1831,6 +1980,34 @@
             consent: "Пожалуйста, подтвердите согласие с политикой конфиденциальности перед отправкой."
           };
         }
+        if (lang.startsWith("fr")) {
+          return {
+            sending: "Envoi de la demande...",
+            success: "Demande envoyee. Nous vous contacterons rapidement.",
+            invalid: "Veuillez indiquer un nom et un email valides.",
+            error: "Envoi impossible pour le moment. Reessayez dans quelques minutes.",
+            cooldown: "Veuillez attendre une minute avant un nouvel envoi.",
+            bot: "La requete n'a pas pu etre validee. Veuillez reessayer.",
+            challenge: "Veuillez completer le controle de securite avant l'envoi.",
+            forwarding: "La livraison est temporairement indisponible. Reessayez dans une minute.",
+            config: "Probleme temporaire de configuration de securite. Reessayez plus tard.",
+            consent: "Vous devez accepter la politique de confidentialite avant d'envoyer."
+          };
+        }
+        if (lang.startsWith("de")) {
+          return {
+            sending: "Anfrage wird gesendet...",
+            success: "Anfrage gesendet. Wir melden uns in Kurze.",
+            invalid: "Bitte geben Sie einen gultigen Namen und eine gultige E-Mail an.",
+            error: "Der Versand war gerade nicht moglich. Bitte versuchen Sie es in einigen Minuten erneut.",
+            cooldown: "Bitte warten Sie eine Minute, bevor Sie erneut senden.",
+            bot: "Die Anfrage konnte nicht validiert werden. Bitte erneut versuchen.",
+            challenge: "Bitte schliessen Sie die Sicherheitsprufung vor dem Senden ab.",
+            forwarding: "Die Zustellung ist vorubergehend nicht verfugbar. Bitte in einer Minute erneut versuchen.",
+            config: "Temporares Sicherheitskonfigurationsproblem erkannt. Bitte spater erneut versuchen.",
+            consent: "Sie mussen der Datenschutzerklarung vor dem Senden zustimmen."
+          };
+        }
         return {
           sending: "Enviando solicitud...",
           success: "Solicitud enviada. Nos pondremos en contacto pronto.",
@@ -2164,7 +2341,7 @@
 
         const storageKey = "siteLang";
         const fallbackLang = "es";
-        const supportedLangs = new Set(["es", "en", "ru"]);
+        const supportedLangs = new Set(["es", "en", "ru", "fr", "de"]);
         const switcher = document.querySelector(".language-switcher");
         const langButtons = document.querySelectorAll(".lang-btn");
 
@@ -2195,9 +2372,11 @@
               reject(new Error("Translations payload is missing or invalid"));
               return;
             }
-            if (!loaded.ru || typeof loaded.ru !== "object" || Object.keys(loaded.ru).length === 0) {
-              loaded.ru = loaded.en || loaded.es;
-            }
+            ["ru", "fr", "de"].forEach((langCode) => {
+              if (!loaded[langCode] || typeof loaded[langCode] !== "object" || Object.keys(loaded[langCode]).length === 0) {
+                loaded[langCode] = loaded.en || loaded.es;
+              }
+            });
             if (loaded.ru && loaded.ru.navToggleOpen && /�/.test(loaded.ru.navToggleOpen)) {
               loaded.ru = loaded.en || loaded.es;
             }
@@ -2302,7 +2481,7 @@
         setMetaContent('meta[name="twitter:title"]', dict.title);
         setMetaContent('meta[name="twitter:description"]', dict.description);
 
-        switcher.setAttribute("aria-label", lang === "ru" ? "Language switcher" : (lang === "en" ? "Language switcher" : "Selector de idioma"));
+        switcher.setAttribute("aria-label", lang === "es" ? "Selector de idioma" : "Language switcher");
 
         if (navToggle) {
           const navIsOpen = siteHeader && siteHeader.classList.contains('nav-open');
@@ -2649,7 +2828,7 @@
     "name": "Casa en Riudecanyes",
     "description": "Vivienda de autor con vistas al mar en Tarragona",
     "image": "https://www.riudecanyesvilla.com/media/aerea-1.jpg",
-    "inLanguage": ["es", "en", "ru"],
+    "inLanguage": ["es", "en", "ru", "fr", "de"],
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Riudecanyes",

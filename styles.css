@@ -215,17 +215,23 @@ iframe {
 .block {
   padding: 56px 20px;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   position: relative;
   isolation: isolate;
-  scroll-margin-top: calc(var(--header-offset) + 14px);
+  scroll-margin-top: var(--header-offset);
   transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease;
 }
 
-main > .block:not(:first-child) {
-  content-visibility: auto;
-  contain-intrinsic-size: 960px;
+#hero,
+#historia,
+#arquitectura,
+#ubicacion,
+#galeria,
+#potencial,
+#contacto {
+  scroll-margin-top: var(--header-offset);
 }
 
 .video-bg,
@@ -315,14 +321,26 @@ video::-webkit-media-controls-play-button {
 
 #contacto.narrow-block {
   max-width: none;
-  min-height: 100vh;
+  min-height: calc(100dvh - var(--header-offset));
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+#historia,
+#contacto {
+  min-height: calc(100dvh - var(--header-offset));
+}
+
 #contacto {
   color: #fff;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #0f0f0f;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
 }
 
 #contacto h2,
@@ -332,6 +350,7 @@ video::-webkit-media-controls-play-button {
 }
 
 #contacto > :not(.contacto-bg-video) {
+  width: min(720px, 100%);
   max-width: 720px;
   margin-left: auto;
   margin-right: auto;
@@ -367,10 +386,9 @@ video::-webkit-media-controls-play-button {
 
 .contacto-bg-video {
   position: absolute;
-  top: -2px;
-  left: -2px;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  inset: -1px;
+  width: auto;
+  height: auto;
   object-fit: cover;
   filter: brightness(0.7);
   z-index: 0;
@@ -2281,7 +2299,7 @@ ul {
 .ubicacion-block {
   position: relative;
   padding: 80px 20px;
-  min-height: 600px;
+  min-height: max(600px, calc(100dvh - var(--header-offset)));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2357,7 +2375,7 @@ ul {
 .potencial-block {
   position: relative;
   padding: 80px 20px;
-  min-height: 600px;
+  min-height: max(600px, calc(100dvh - var(--header-offset)));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2476,7 +2494,7 @@ ul {
   position: relative;
   overflow: hidden;
   padding: 80px 20px;
-  min-height: 600px;
+  min-height: max(600px, calc(100dvh - var(--header-offset)));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2580,12 +2598,26 @@ ul {
 .historia-block {
   position: relative;
   width: 100%;
-  min-height: 600px;
+  min-height: max(600px, calc(100dvh - var(--header-offset)));
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
   overflow: hidden;
+}
+
+.ventajas-ubicacion-block {
+  min-height: max(600px, calc(100dvh - var(--header-offset)));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(72px, 8vh, 96px);
+  padding-bottom: clamp(72px, 8vh, 96px);
+}
+
+#galeria,
+#contacto {
+  min-height: max(600px, calc(100dvh - var(--header-offset)));
 }
 
 .historia-bg {
@@ -2933,14 +2965,15 @@ ul {
   }
 
   .hero-section {
-    height: 100svh;
-    min-height: 100svh;
+    height: 100dvh;
+    min-height: 100dvh;
     margin-top: 0;
     padding-top: 0;
   }
 
   .site-header.is-scrolled {
-    background: rgba(16, 16, 16, 0.78);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   }
 
   .site-header:not(.is-scrolled) .nav-list a {
@@ -2959,9 +2992,21 @@ ul {
   .arquitectura-block,
   .ubicacion-block,
   .potencial-block,
+  #galeria,
+  #contacto,
   .galeria-block,
   .hipoteca-block {
     min-height: 520px;
+  }
+
+  .historia-block,
+  .arquitectura-block,
+  .ubicacion-block,
+  .ventajas-ubicacion-block,
+  .potencial-block,
+  #galeria,
+  #contacto {
+    min-height: max(520px, calc(100dvh - var(--header-offset)));
   }
 
   .arquitectura-columns,
@@ -3048,8 +3093,9 @@ ul {
   }
 
   .site-header.is-scrolled {
-    background: rgba(16, 16, 16, 0.78);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   }
 
   .site-header:not(.is-scrolled) .nav-list a {
@@ -3057,8 +3103,8 @@ ul {
   }
 
   .hero-section {
-    height: 100svh;
-    min-height: 100svh;
+    height: 100dvh;
+    min-height: 100dvh;
     margin-top: 0;
     padding-top: 0;
   }
@@ -3068,6 +3114,16 @@ ul {
   .block {
     min-height: auto;
     padding: 80px 20px;
+  }
+
+  .historia-block,
+  .arquitectura-block,
+  .ubicacion-block,
+  .ventajas-ubicacion-block,
+  .potencial-block,
+  #galeria,
+  #contacto {
+    min-height: calc(100dvh - var(--header-offset));
   }
 
   :root {
@@ -3090,7 +3146,8 @@ ul {
   }
 
   .site-header.is-scrolled {
-    background: rgba(16, 16, 16, 0.78);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   }
 
   .site-header:not(.is-scrolled) .nav-list a {
@@ -3186,7 +3243,7 @@ ul {
   }
 
   .hero-section {
-    min-height: 100svh;
+    min-height: 100dvh;
     margin-top: 0;
     padding-top: 0;
     padding-left: 16px;
@@ -3585,6 +3642,16 @@ ul {
   .block {
     min-height: auto;
     padding: 80px 20px;
+  }
+
+  .historia-block,
+  .arquitectura-block,
+  .ubicacion-block,
+  .ventajas-ubicacion-block,
+  .potencial-block,
+  #galeria,
+  #contacto {
+    min-height: calc(100dvh - var(--header-offset));
   }
 
   .hero-content {
