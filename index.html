@@ -831,9 +831,6 @@
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', () => {
         syncHeaderOffsetVar();
-        if (window.location.hash) {
-          scrollToAnchorHash(window.location.hash, 'auto');
-        }
       }, { passive: true });
     }
     syncHeaderOffsetVar();
@@ -861,11 +858,24 @@
       return Math.max(cssOffset, headerHeight, 0);
     };
 
+    let anchorScrollToken = 0;
+
+    const clearHashInUrl = () => {
+      if (!window.location.hash) {
+        return;
+      }
+
+      const cleanUrl = `${window.location.pathname}${window.location.search}`;
+      history.replaceState(history.state, '', cleanUrl);
+    };
+
     const scrollToAnchorHash = (hash, behavior = 'smooth') => {
       const target = resolveAnchorTarget(hash);
       if (!target) {
         return false;
       }
+
+      const localToken = ++anchorScrollToken;
 
       const getTop = () => {
         const anchorTop = target.getBoundingClientRect().top + window.pageYOffset;
@@ -889,11 +899,16 @@
         });
       };
 
-      window.requestAnimationFrame(correctPosition);
-      window.setTimeout(correctPosition, 120);
-      window.setTimeout(correctPosition, 320);
-      window.setTimeout(correctPosition, 650);
-      window.setTimeout(correctPosition, 1000);
+      window.requestAnimationFrame(() => {
+        if (localToken === anchorScrollToken) {
+          correctPosition();
+        }
+      });
+      window.setTimeout(() => {
+        if (localToken === anchorScrollToken) {
+          correctPosition();
+        }
+      }, 120);
 
       return true;
     };
@@ -934,19 +949,14 @@
           scrollToAnchorHash(hash, 'smooth');
         }
 
-        if (window.location.hash !== hash) {
-          history.pushState(null, '', hash);
-        }
+        clearHashInUrl();
       });
-    });
-
-    window.addEventListener('hashchange', () => {
-      scrollToAnchorHash(window.location.hash, 'auto');
     });
 
     window.addEventListener('load', () => {
       if (window.location.hash) {
         scrollToAnchorHash(window.location.hash, 'auto');
+        window.setTimeout(clearHashInUrl, 150);
       }
     });
 
@@ -1444,6 +1454,10 @@
       };
 
       const warmCriticalImages = () => {
+        if (isMobileLike) {
+          return;
+        }
+
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         if (connection && (connection.saveData || /2g/.test(connection.effectiveType || ""))) {
           return;
