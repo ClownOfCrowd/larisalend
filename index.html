@@ -38,10 +38,10 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="styles.css">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-</head>
-<body class="boot-loading">
-
-  <div class="boot-preloader" id="boot-preloader" role="status" aria-live="polite" aria-label="Cargando sitio">
+    <p>
+      <span id="cookie-banner-copy">Este sitio utiliza cookies necesarias y opcionales para mejorar la experiencia.</span>
+      <a id="cookie-policy-link" href="privacy.html">Política de privacidad</a>
+    </p>
     <div class="boot-preloader-mark" aria-hidden="true"></div>
     <p>Cargando experiencia...</p>
   </div>
@@ -52,6 +52,13 @@
       <span></span>
       <span></span>
       <span></span>
+      <label class="consent-wrap" for="privacy-consent">
+        <input id="privacy-consent" type="checkbox" name="privacyConsent" value="yes" required>
+        <span>
+          <span id="privacy-consent-prefix">He leido y acepto la</span>
+          <a id="privacy-consent-link" href="privacy.html" target="_blank" rel="noopener noreferrer">Politica de privacidad</a>
+        </span>
+      </label>
     </button>
     <nav id="main-nav">
       <ul class="nav-list">
@@ -552,6 +559,13 @@
           data-language="es"
         ></div>
       </div>
+      <label class="consent-wrap" for="privacy-consent">
+        <input id="privacy-consent" type="checkbox" name="privacyConsent" value="yes" required>
+        <span>
+          <span id="privacy-consent-prefix">He leido y acepto la</span>
+          <a id="privacy-consent-link" href="privacy.html" target="_blank" rel="noopener noreferrer">Politica de privacidad</a>
+        </span>
+      </label>
       <button type="submit">Enviar</button>
       <p class="contact-form-status" id="contact-form-status" role="status" aria-live="polite" hidden></p>
     </form>
@@ -1207,8 +1221,8 @@
 
   <div class="cookie-banner" id="cookie-banner" role="region" aria-label="Aviso de cookies" aria-live="polite" hidden>
     <p>
-      Este sitio utiliza cookies necesarias y opcionales para mejorar la experiencia.
-      <a href="privacy.html">Política de privacidad</a>
+      <span id="cookie-banner-copy">Este sitio utiliza cookies necesarias y opcionales para mejorar la experiencia.</span>
+      <a id="cookie-policy-link" href="privacy.html">Política de privacidad</a>
     </p>
     <div class="cookie-actions">
       <button id="accept-cookies" class="cookie-btn cookie-btn-accept" type="button">Aceptar todo</button>
@@ -1806,7 +1820,8 @@
             bot: "Request could not be validated. Please try again.",
             challenge: "Please complete the security challenge.",
             forwarding: "Delivery is temporarily unavailable. Please try again in a minute.",
-            config: "Security configuration issue detected. Please try again shortly."
+            config: "Security configuration issue detected. Please try again shortly.",
+            consent: "Please accept the privacy policy before sending."
           };
         }
         if (lang.startsWith("ru")) {
@@ -1819,7 +1834,8 @@
             bot: "Не удалось подтвердить корректность запроса. Повторите попытку.",
             challenge: "Пожалуйста, пройдите проверку безопасности.",
             forwarding: "Временная ошибка доставки. Повторите попытку через минуту.",
-            config: "Обнаружена ошибка конфигурации безопасности. Повторите позже."
+            config: "Обнаружена ошибка конфигурации безопасности. Повторите позже.",
+            consent: "Пожалуйста, подтвердите согласие с политикой конфиденциальности перед отправкой."
           };
         }
         return {
@@ -1831,7 +1847,8 @@
           bot: "No se pudo validar la solicitud. Inténtelo de nuevo.",
           challenge: "Complete el reto de seguridad antes de enviar.",
           forwarding: "La entrega está temporalmente no disponible. Inténtelo en un minuto.",
-          config: "Hay un problema temporal de configuración de seguridad. Inténtelo más tarde."
+          config: "Hay un problema temporal de configuración de seguridad. Inténtelo más tarde.",
+          consent: "Debe aceptar la política de privacidad antes de enviar."
         };
       };
 
@@ -1890,6 +1907,7 @@
         const nameInput = contactForm.querySelector('input[name="nombre"]');
         const emailInput = contactForm.querySelector('input[name="email"]');
         const honeypotInput = contactForm.querySelector('input[name="company"]');
+        const consentInput = contactForm.querySelector('input[name="privacyConsent"]');
         const turnstileTokenInput = contactForm.querySelector('input[name="cf-turnstile-response"]');
 
         const name = (nameInput?.value || "").trim();
@@ -1921,6 +1939,11 @@
 
         if (name.length < 2 || !emailOk) {
           showStatus(messages.invalid, true);
+          return;
+        }
+
+        if (!consentInput || !consentInput.checked) {
+          showStatus(messages.consent, true);
           return;
         }
 
@@ -2220,6 +2243,13 @@
         }
       };
 
+      const setMetaContent = (selector, value) => {
+        const node = document.querySelector(selector);
+        if (node && typeof value === "string") {
+          node.setAttribute("content", value);
+        }
+      };
+
         const updateLangInUrl = (lang) => {
           try {
             const url = new URL(window.location.href);
@@ -2265,6 +2295,19 @@
         if (metaDesc) {
           metaDesc.setAttribute("content", dict.description);
         }
+
+        const baseSiteUrl = "https://www.riudecanyesvilla.com/";
+        const canonicalUrl = lang === fallbackLang ? baseSiteUrl : `${baseSiteUrl}?lang=${lang}`;
+        const canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (canonicalLink) {
+          canonicalLink.setAttribute("href", canonicalUrl);
+        }
+
+        setMetaContent('meta[property="og:title"]', dict.title);
+        setMetaContent('meta[property="og:description"]', dict.description);
+        setMetaContent('meta[property="og:url"]', canonicalUrl);
+        setMetaContent('meta[name="twitter:title"]', dict.title);
+        setMetaContent('meta[name="twitter:description"]', dict.description);
 
         switcher.setAttribute("aria-label", lang === "ru" ? "Language switcher" : (lang === "en" ? "Language switcher" : "Selector de idioma"));
 
@@ -2433,6 +2476,20 @@
           if (email) email.placeholder = dict.contactoMail;
           if (btn) btn.textContent = dict.contactoBtn;
         }
+
+        const cookieBannerNode = document.getElementById('cookie-banner');
+        if (cookieBannerNode && typeof dict.cookieBannerAria === 'string') {
+          cookieBannerNode.setAttribute('aria-label', dict.cookieBannerAria);
+        }
+
+        setText('#cookie-banner-copy', dict.cookieBannerText);
+        setText('#cookie-policy-link', dict.cookiePolicyLink);
+        setText('#accept-cookies', dict.cookieAcceptAll);
+        setText('#essential-cookies', dict.cookieEssential);
+        setText('#reject-cookies', dict.cookieReject);
+
+        setText('#privacy-consent-prefix', dict.contactConsentPrefix);
+        setText('#privacy-consent-link', dict.contactConsentLink);
 
         setText('.sticky-cta', dict.stickyCta);
 
