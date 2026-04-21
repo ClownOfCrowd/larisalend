@@ -43,7 +43,11 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="shortcut icon" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="styles.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-51BFNFLLCS"></script>
   <script>
@@ -71,13 +75,13 @@
     </button>
     <nav id="main-nav">
       <ul class="nav-list">
-        <li><a href="#hero">Inicio</a></li>
-        <li><a href="#historia">Historia</a></li>
-        <li><a href="#arquitectura">Arquitectura</a></li>
-        <li><a href="#ubicacion">Ubicación</a></li>
-        <li><a href="#galeria">Galería</a></li>
-        <li><a href="#potencial">Potencial</a></li>
-        <li><a href="#contacto">Contacto</a></li>
+        <li><a href="/" data-scroll-target="hero">Inicio</a></li>
+        <li><a href="/" data-scroll-target="historia">Historia</a></li>
+        <li><a href="/" data-scroll-target="arquitectura">Arquitectura</a></li>
+        <li><a href="/" data-scroll-target="ubicacion">Ubicación</a></li>
+        <li><a href="/" data-scroll-target="galeria">Galería</a></li>
+        <li><a href="/" data-scroll-target="potencial">Potencial</a></li>
+        <li><a href="/" data-scroll-target="contacto">Contacto</a></li>
       </ul>
     </nav>
     <div class="language-switcher" role="group" aria-label="Selector de idioma">
@@ -107,7 +111,7 @@
         Proyecto firmado por el arquitecto Miguel María Aragonés.
       </p>
       <div class="hero-cta">
-        <a href="#contacto" class="btn primary">Solicitar información</a>
+        <a href="/" data-scroll-target="contacto" class="btn primary">Solicitar información</a>
       </div>
     </div>
     <div class="hero-scroll" aria-hidden="true"></div>
@@ -453,7 +457,7 @@
       </figure>
 
       <div class="investment-footer reveal reveal-delay-3">
-        <a href="#contacto" class="btn primary investment-cta">Solicitar información de la inversión</a>
+        <a href="/" data-scroll-target="contacto" class="btn primary investment-cta">Solicitar información de la inversión</a>
       </div>
     </div>
   </section>
@@ -848,19 +852,15 @@
     syncHeaderOffsetVar();
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const internalAnchorSelector = 'a[href^="#"]';
+    const internalAnchorSelector = 'a[data-scroll-target]';
     const excludedAnchorIds = new Set(['telegram-cta', 'whatsapp-cta']);
 
-    const resolveAnchorTarget = (hash) => {
-      if (!hash || hash === '#') {
+    const resolveAnchorTarget = (targetId) => {
+      if (!targetId) {
         return null;
       }
 
-      try {
-        return document.querySelector(hash);
-      } catch (error) {
-        return null;
-      }
+      return document.getElementById(targetId);
     };
 
     const getAnchorOffset = () => {
@@ -881,8 +881,8 @@
       history.replaceState(history.state, '', cleanUrl);
     };
 
-    const scrollToAnchorHash = (hash, behavior = 'smooth') => {
-      const target = resolveAnchorTarget(hash);
+    const scrollToAnchorTarget = (targetId, behavior = 'smooth') => {
+      const target = resolveAnchorTarget(targetId);
       if (!target) {
         return false;
       }
@@ -934,12 +934,12 @@
         return;
       }
 
-      const { hash } = link;
-      if (!hash || hash === '#') {
+      const targetId = (link.dataset.scrollTarget || '').trim();
+      if (!targetId) {
         return;
       }
 
-      if (!resolveAnchorTarget(hash)) {
+      if (!resolveAnchorTarget(targetId)) {
         return;
       }
 
@@ -954,11 +954,11 @@
         if (shouldDefer) {
           window.setTimeout(() => {
             syncHeaderOffsetVar();
-            scrollToAnchorHash(hash, 'smooth');
+            scrollToAnchorTarget(targetId, 'smooth');
           }, 80);
         } else {
           syncHeaderOffsetVar();
-          scrollToAnchorHash(hash, 'smooth');
+          scrollToAnchorTarget(targetId, 'smooth');
         }
 
         clearHashInUrl();
@@ -967,7 +967,10 @@
 
     window.addEventListener('load', () => {
       if (window.location.hash) {
-        scrollToAnchorHash(window.location.hash, 'auto');
+        const legacyTargetId = window.location.hash.replace('#', '').trim();
+        if (legacyTargetId) {
+          scrollToAnchorTarget(legacyTargetId, 'auto');
+        }
         window.setTimeout(clearHashInUrl, 150);
       }
     });
@@ -1370,7 +1373,7 @@
     </a>
   </div>
 
-  <a href="#contacto" class="sticky-cta">Solicitar visita</a>
+  <a href="/" data-scroll-target="contacto" class="sticky-cta">Solicitar visita</a>
 
   <div class="lightbox" id="lightbox" aria-hidden="true">
     <button class="lightbox-nav lightbox-nav-prev" type="button" aria-label="Imagen anterior">
@@ -2514,13 +2517,13 @@
           navToggle.setAttribute('aria-label', navIsOpen ? dict.navToggleClose : dict.navToggleOpen);
         }
 
-        setText('.nav-list a[href="#hero"]', dict.navHome);
-        setText('.nav-list a[href="#historia"]', dict.navHistoria);
-        setText('.nav-list a[href="#arquitectura"]', dict.navArquitectura);
-        setText('.nav-list a[href="#ubicacion"]', dict.navUbicacion);
-        setText('.nav-list a[href="#galeria"]', dict.navGaleria);
-        setText('.nav-list a[href="#potencial"]', dict.navPotencial);
-        setText('.nav-list a[href="#contacto"]', dict.navContacto);
+        setText('.nav-list a[data-scroll-target="hero"]', dict.navHome);
+        setText('.nav-list a[data-scroll-target="historia"]', dict.navHistoria);
+        setText('.nav-list a[data-scroll-target="arquitectura"]', dict.navArquitectura);
+        setText('.nav-list a[data-scroll-target="ubicacion"]', dict.navUbicacion);
+        setText('.nav-list a[data-scroll-target="galeria"]', dict.navGaleria);
+        setText('.nav-list a[data-scroll-target="potencial"]', dict.navPotencial);
+        setText('.nav-list a[data-scroll-target="contacto"]', dict.navContacto);
 
         setText('.hero-content h1', dict.heroTitle);
         setText('.hero-subtitle', dict.heroSubtitle);

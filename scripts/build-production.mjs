@@ -11,7 +11,18 @@ const root = process.cwd();
 const srcIndex = path.join(root, 'index.html');
 const srcStyles = path.join(root, 'styles.css');
 const srcMedia = path.join(root, 'media');
-const staticFiles = ['privacy.html', 'robots.txt', 'sitemap.xml', 'translations-data.js', 'favicon.svg'];
+const staticFiles = [
+  'privacy.html',
+  'robots.txt',
+  'sitemap.xml',
+  'translations-data.js',
+  'favicon.svg',
+  'favicon.ico',
+  'favicon-48x48.png',
+  'favicon-192x192.png',
+  'apple-touch-icon.png',
+  'site.webmanifest'
+];
 
 const distDir = path.join(root, 'dist');
 const distMedia = path.join(distDir, 'media');
