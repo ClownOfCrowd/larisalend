@@ -11,7 +11,7 @@ const root = process.cwd();
 const srcIndex = path.join(root, 'index.html');
 const srcStyles = path.join(root, 'styles.css');
 const srcMedia = path.join(root, 'media');
-const staticFiles = ['privacy.html', 'robots.txt', 'sitemap.xml', 'translations-data.js'];
+const staticFiles = ['privacy.html', 'robots.txt', 'sitemap.xml', 'translations-data.js', 'favicon.svg'];
 
 const distDir = path.join(root, 'dist');
 const distMedia = path.join(distDir, 'media');

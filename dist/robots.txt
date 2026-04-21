@@ -1,4 +1,7 @@
 User-agent: *
 Disallow:
+Allow: /
+
+Host: https://www.riudecanyesvilla.com
 
 Sitemap: https://www.riudecanyesvilla.com/sitemap.xml
